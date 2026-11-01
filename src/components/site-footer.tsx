@@ -120,15 +120,15 @@ export function SiteFooter() {
           whileInView={{ y: "0%", opacity: 1 }}
           viewport={{ once: true }}
           transition={{ type: "spring", bounce: 0, duration: 1.2 }}
-          className="text-center font-black leading-[0.78] tracking-[-0.07em]"
+          className="pb-[0.04em] text-center font-black leading-[1.08] tracking-[-0.06em]"
           style={{
             fontSize: "clamp(96px, 24vw, 380px)",
             background: "linear-gradient(100deg, #EA753C 0%, #F6CB67 28%, #49C29F 58%, #2B8FD6 85%)",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             color: "transparent",
-            maskImage: "linear-gradient(180deg, #000 55%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(180deg, #000 55%, transparent 100%)",
+            maskImage: "linear-gradient(180deg, #000 78%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(180deg, #000 78%, transparent 100%)",
           }}
         >
           Pasyar

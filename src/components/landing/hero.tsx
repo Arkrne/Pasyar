@@ -100,7 +100,7 @@ export function Hero() {
 
         {/* Act 1: cut-out wordmark. Black letters on a light layer with screen blend = windows into the photos. */}
         {!reduce && (
-          <motion.div style={{ opacity: wordOpacity }} className="pointer-events-none absolute inset-0 flex items-center justify-center mix-blend-screen" aria-hidden>
+          <motion.div style={{ opacity: wordOpacity }} className="pointer-events-none absolute inset-0 flex items-center justify-center pb-[14vh] mix-blend-screen" aria-hidden>
             <div
               className="absolute inset-0"
               style={{
@@ -150,7 +150,7 @@ export function Hero() {
               </motion.div>
             ))}
 
-            <div className="absolute inset-x-0 top-[17%] flex justify-center px-6 md:top-[19%]">
+            <div className="absolute inset-x-0 top-[calc(50%-7vh-16.8vw-76px)] flex justify-center px-6 sm:top-[calc(50%-7vh-5.1vw-84px)] 2xl:top-[calc(50%-7vh-82px-84px)]">
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -161,7 +161,7 @@ export function Hero() {
               </motion.p>
             </div>
 
-            <div className="absolute inset-x-0 bottom-[16%] flex flex-col items-center px-6 text-center md:bottom-[14%]">
+            <div className="absolute inset-x-0 top-[calc(50%-7vh+16.8vw+28px)] flex flex-col items-center px-6 text-center sm:top-[calc(50%-7vh+5.1vw+36px)] 2xl:top-[calc(50%-7vh+82px+36px)]">
               <motion.p
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -177,7 +177,7 @@ export function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
-                className="mt-8 flex flex-col items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted"
+                className="mt-6 flex flex-col items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted"
               >
                 Scroll to dive in
                 <span className="relative block h-9 w-[22px] rounded-full border-2 border-ink/25">
