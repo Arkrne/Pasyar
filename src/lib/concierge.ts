@@ -35,7 +35,7 @@ export function fallbackAnswer(q: string): string {
     return "Withdraw cash in Virac. ATMs are scarce in the north and east. Most guides and homestays take GCash, but carry small bills for entrance and environmental fees.";
   if (/get there|flight|ferry|boat|tabaco|airport|how do i/.test(s))
     return "Cebu Pacific flies Manila to Virac in about 1 hour 10 minutes. By sea, fast craft from Tabaco reach Virac in about 1.5 hours, and RoRo ferries reach San Andres in about 2.5 hours.";
-  if (/emergency|hospital|police|help|911/.test(s))
+  if (/emergency|hospital|police|911/.test(s))
     return "Call 911 for emergencies. Eastern Bicol Medical Center in Virac is the provincial hospital. The Coast Guard station is at Virac port.";
   if (/signal|wifi|internet|offline/.test(s))
     return "Signal drops in Gigmoto, Pandan and on the trails. Save your trip for offline use from the Trips tab; tickets and the map you already opened still work.";
