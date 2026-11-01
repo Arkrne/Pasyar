@@ -3,8 +3,6 @@ import { Hero } from "@/components/landing/hero";
 import { RouteStory } from "@/components/landing/route-story";
 import {
   CommunityTeaser,
-  FinalCTA,
-  Footer,
   HowItWorks,
   IslandFacts,
   MarketTeaser,
@@ -14,6 +12,7 @@ import {
   TownsRail,
 } from "@/components/landing/sections";
 import { TabBar } from "@/components/shell";
+import { SiteFooter } from "@/components/site-footer";
 import { ForecastSection, FestivalStrip } from "@/components/landing/island-sections";
 import { MosaicBand } from "@/components/icons";
 
@@ -36,9 +35,8 @@ export default function Home() {
         <MoneySection />
         <MosaicBand className="mt-10" />
         <MarketTeaser />
-        <FinalCTA />
       </main>
-      <Footer />
+      <SiteFooter />
       <TabBar />
     </>
   );

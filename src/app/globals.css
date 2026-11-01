@@ -268,7 +268,7 @@ select {
 .pb-tabbar {
   padding-bottom: calc(var(--tabbar-h) + var(--safe-b) + 24px);
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .pb-tabbar {
     padding-bottom: 48px;
   }
