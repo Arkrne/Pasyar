@@ -16,8 +16,8 @@ const DICT = {
   planCta: { en: "Plan my trip", fil: "Planuhin ang biyahe ko", bcl: "Planuhon an biyahe ko" },
   thanks: { en: "Thank you", fil: "Salamat", bcl: "Dios mabalos" },
   heroSub: {
-    en: "Tell us how long you have and what you love. Pasyar builds a day-by-day trip with real local guides, stays and rides you can book in one go.",
-    fil: "Sabihin kung ilang araw ka at ano ang gusto mo. Gagawa ang Pasyar ng plano kada araw kasama ang mga lokal na guide, matutuluyan at sasakyan na puwede mong i-book nang sabay-sabay.",
+    en: "First visit or tenth, Catanduanes treats you like family. Tell us what you love and we'll shape the days around you, with the local guides, homestays and drivers who'll welcome you in.",
+    fil: "Una mo man o ikasampung bisita, pamilya ang turing sa iyo ng Catanduanes. Sabihin mo ang gusto mo at bubuuin namin ang bawat araw kasama ang mga lokal na guide, homestay at driver na sasalubong sa iyo.",
     bcl: "Sabihon kun pira an aldaw mo asin ano an gusto mo. Gigibuhon kan Pasyar an plano kada aldaw kaiba an mga lokal na guide, darayuhan asin sasakyan na puwede mong i-book sa sarong beses.",
   },
 } as const;

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ??
       (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000"),
   ),
-  title: { default: "Pasyar · Your Catanduanes trip, planned in 60 seconds", template: "%s · Pasyar" },
+  title: { default: "Pasyar · Welcome to the Happy Island, Catanduanes", template: "%s · Pasyar" },
   description:
     "Plan a day-by-day Catanduanes trip with real places, local guides, stays and rides you can book in one checkout. Built in Catanduanes for IGNITE 2026.",
   applicationName: "Pasyar",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: { capable: true, title: "Pasyar", statusBarStyle: "default" },
   openGraph: {
-    title: "Pasyar · Catanduanes, planned in 60 seconds",
+    title: "Pasyar · Welcome to the Happy Island",
     description: "Real places, local operators, one checkout.",
     images: ["/photos/binurong-sunset.webp"],
   },

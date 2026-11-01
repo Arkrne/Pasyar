@@ -9,11 +9,12 @@ export interface RoadRoute {
   coords: [number, number][]; // [lat, lng]
   km: number;
   minutes: number;
+  legs: { km: number; minutes: number; mid: [number, number] }[];
 }
 
 const mem = new Map<string, RoadRoute>();
 const inflight = new Map<string, Promise<RoadRoute | null>>();
-const LS = "pasyar-roads-v1";
+const LS = "pasyar-roads-v2";
 
 function keyOf(pts: [number, number][]) {
   return pts.map(([a, b]) => `${a.toFixed(4)},${b.toFixed(4)}`).join(";");
@@ -65,10 +66,28 @@ export async function roadRoute(pts: [number, number][]): Promise<RoadRoute | nu
     .then((j) => {
       const route = j?.routes?.[0];
       if (!route) return null;
+      const coords = thin((route.geometry.coordinates as [number, number][]).map(([lng, lat]) => [lat, lng] as [number, number]));
+      // place each leg's label on the road point nearest the middle of its two stops
+      const legs = (route.legs as { distance: number; duration: number }[]).map((l, i) => {
+        const a = pts[i];
+        const b = pts[i + 1];
+        const m: [number, number] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        let best = coords[0];
+        let bd = Infinity;
+        for (const c of coords) {
+          const d = (c[0] - m[0]) ** 2 + (c[1] - m[1]) ** 2;
+          if (d < bd) {
+            bd = d;
+            best = c;
+          }
+        }
+        return { km: Math.round(l.distance / 100) / 10, minutes: Math.max(1, Math.round(l.duration / 60)), mid: best };
+      });
       const out: RoadRoute = {
-        coords: thin((route.geometry.coordinates as [number, number][]).map(([lng, lat]) => [lat, lng] as [number, number])),
+        coords,
         km: Math.round(route.distance / 100) / 10,
         minutes: Math.round(route.duration / 60),
+        legs,
       };
       mem.set(k, out);
       writeLS(k, out);

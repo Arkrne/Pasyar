@@ -389,6 +389,7 @@ const DaySection = forwardRef<
         </h2>
       </div>
       <DayExtras d={d} />
+      <StayBanner d={d} />
       <p className="ml-[38px] mt-0.5 text-[13px] text-muted">
         {new Date(d.date).toLocaleDateString("en-PH", { weekday: "long", month: "short", day: "numeric" })} · {Math.round(d.driveMin / 6) / 10} h driving · {peso(d.cost)}
       </p>
@@ -576,6 +577,27 @@ function DayExtras({ d }: { d: DayPlan }) {
           <Tile name={f.icon} bg={f.town === "province" ? ISLAND.sunset : TOWN_STYLE[f.town].color} size={20} /> {f.name}
         </span>
       ))}
+    </div>
+  );
+}
+
+/** The hotel you sleep at tonight, shown up front so the booking is obvious. */
+function StayBanner({ d }: { d: DayPlan }) {
+  const stay = d.items.find((i) => i.type === "stay");
+  if (!stay) return null;
+  const op = stay.operatorId ? OPERATOR_BY_ID[stay.operatorId] : null;
+  return (
+    <div className="ml-[38px] mt-3 flex items-center gap-3 overflow-hidden rounded-[18px] bg-gradient-to-r from-[#1d2b3a] to-[#24405a] p-2 pr-4 text-white shadow-[var(--shadow-md)]">
+      {op && <Photo src={op.photo} alt={op.name} className="size-14 shrink-0 rounded-[13px]" sizes="56px" />}
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-white/60">Tonight you sleep at</p>
+        <p className="truncate text-[15px] font-semibold">{stay.title}</p>
+        <p className="truncate text-[12px] text-white/70">{stay.subtitle}</p>
+      </div>
+      <div className="text-right">
+        <p className="tabular text-[15px] font-bold">{peso(stay.cost)}</p>
+        <p className="text-[11px] font-semibold text-[#9FE7D2]">Booked in checkout</p>
+      </div>
     </div>
   );
 }

@@ -212,8 +212,8 @@ function Act2({ slide, setSlide }: { slide: number; setSlide: (n: number) => voi
           <Tile name="sun" bg={ISLAND.sun} size={22} /> {t("welcome", lang)}
         </p>
         <h2 className="t-hero max-w-5xl text-balance">
-          Your Catanduanes trip,{" "}
-          <span className="bg-gradient-to-r from-[#FFE7A3] via-[#FFB27A] to-[#9FE7D2] bg-clip-text text-transparent">planned in 60 seconds.</span>
+          Maogmang pag-abot!{" "}
+          <span className="bg-gradient-to-r from-[#FFE7A3] via-[#FFB27A] to-[#9FE7D2] bg-clip-text text-transparent">Welcome home to the Happy Island.</span>
         </h2>
         <p className="t-lead mt-5 max-w-xl text-white/85">{t("heroSub", lang)}</p>
         <div className="mt-6 hidden flex-wrap gap-2 md:flex">
