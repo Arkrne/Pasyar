@@ -92,7 +92,7 @@ export function FooterWordmark() {
       </defs>
 
       {/* soft glow behind the letters */}
-      <text x="24" y="250" textLength="948" lengthAdjust="spacingAndGlyphs" fontSize="300" fontWeight={900} fill="#2B8FD6" opacity="0.18" style={{ fontFamily: "var(--font-inter), system-ui, sans-serif", filter: "blur(18px)" }}>
+      <text x="24" y="250" textLength="948" lengthAdjust="spacingAndGlyphs" fontSize="300" fontWeight={700} fill="#2B8FD6" opacity="0.18" style={{ fontFamily: "var(--font-fredoka), var(--font-inter), sans-serif", filter: "blur(18px)" }}>
         Pasyar
       </text>
       {/* tile-filled letters with a white rim */}
@@ -102,18 +102,18 @@ export function FooterWordmark() {
         textLength="948"
         lengthAdjust="spacingAndGlyphs"
         fontSize="300"
-        fontWeight={900}
+        fontWeight={700}
         fill="url(#pasyar-mosaic)"
         stroke="#FFF7EC"
         strokeWidth="5"
         paintOrder="stroke"
         strokeLinejoin="round"
-        style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
+        style={{ fontFamily: "var(--font-fredoka), var(--font-inter), sans-serif" }}
       >
         Pasyar
       </text>
       {/* glossy top light, like glazed tiles */}
-      <text x="24" y="250" textLength="948" lengthAdjust="spacingAndGlyphs" fontSize="300" fontWeight={900} fill="url(#pasyar-sheen)" style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
+      <text x="24" y="250" textLength="948" lengthAdjust="spacingAndGlyphs" fontSize="300" fontWeight={700} fill="url(#pasyar-sheen)" style={{ fontFamily: "var(--font-fredoka), var(--font-inter), sans-serif" }}>
         Pasyar
       </text>
 
