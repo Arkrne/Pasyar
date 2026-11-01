@@ -57,7 +57,7 @@ export default function WeatherPage() {
           </div>
         </div>
         <div className="relative mt-4 h-[64svh] overflow-hidden rounded-[28px] outline outline-1 outline-[var(--hairline)]">
-          <ExploreMap selected={null} onSelect={() => {}} places={[]} onPlace={() => {}} weather={forecast} weatherDay={day} showPlaces={false} />
+          <ExploreMap selected={null} onSelect={() => {}} places={[]} onPlace={() => {}} weather={forecast} weatherDay={day} showPlaces={false} basemap={false} />
           <div className="glass-strong absolute bottom-3 left-3 z-[500] flex flex-wrap gap-x-3 gap-y-1 rounded-2xl px-3.5 py-2.5 text-[12px] shadow-[var(--shadow-md)]">
             {Object.values(VERDICT).map((v) => (
               <span key={v.label} className="flex items-center gap-1.5">

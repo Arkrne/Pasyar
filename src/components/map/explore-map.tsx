@@ -45,7 +45,22 @@ function placeIcon(p: Place, dim: boolean, hot: boolean) {
   });
 }
 
-function townBadge(id: TownId, selected: boolean, wxCode?: number, verdictColor?: string, showLabel = true) {
+function townBadge(id: TownId, selected: boolean, wxCode?: number, verdictColor?: string, showLabel = true, temp?: number) {
+  if (wxCode != null && verdictColor) {
+    const icon = renderToStaticMarkup(<WeatherGlyph code={wxCode} size={40} />);
+    return L.divIcon({
+      className: "",
+      html: `<div style="display:flex;flex-direction:column;align-items:center;transform:translateY(-10px);animation:pin-in 600ms cubic-bezier(.23,1,.32,1) both">
+        <div style="display:flex;align-items:center;gap:2px;padding:3px 10px 3px 3px;border-radius:999px;background:linear-gradient(135deg,${verdictColor} 0%,${verdictColor}cc 100%);box-shadow:0 0 0 3px #fff,0 12px 24px -8px ${verdictColor};color:#fff">
+          <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:999px;background:rgba(255,255,255,.92)">${icon}</span>
+          <span style="font:800 17px/1 var(--font-fredoka),var(--font-sans);letter-spacing:-.01em">${temp ?? ""}°</span>
+        </div>
+        <span style="margin-top:4px;font:700 11px/1 var(--font-sans);color:#1d1d1f;background:#fff;padding:3px 8px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap">${TOWN_BY_ID[id].name}</span>
+      </div>`,
+      iconSize: [90, 76],
+      iconAnchor: [45, 36],
+    });
+  }
   const st = TOWN_STYLE[id];
   const inner = wxCode != null
     ? renderToStaticMarkup(<WeatherGlyph code={wxCode} size={30} still />)
@@ -110,6 +125,7 @@ export default function ExploreMap({
   weather,
   weatherDay = 0,
   showPlaces = true,
+  basemap = true,
 }: {
   selected: TownId | null;
   onSelect: (t: TownId | null) => void;
@@ -118,6 +134,7 @@ export default function ExploreMap({
   weather?: Forecast | null;
   weatherDay?: number;
   showPlaces?: boolean;
+  basemap?: boolean;
 }) {
   const verdicts = useMemo(() => {
     if (!weather) return null;
@@ -128,7 +145,7 @@ export default function ExploreMap({
 
   return (
     <MapContainer center={[13.8, 124.25]} zoom={10} zoomControl={false} scrollWheelZoom className="h-full w-full" attributionControl>
-      <Basemap />
+      {basemap && <Basemap />}
       <IslandMask />
       <GeoJSON
         key={key}
@@ -140,9 +157,9 @@ export default function ExploreMap({
           return {
             className: "town-shape",
             color: on ? color : "#ffffff",
-            weight: on ? 3 : 1.5,
+            weight: on ? 3 : basemap ? 1.5 : 2.5,
             fillColor: color,
-            fillOpacity: on ? 0.38 : selected ? 0.1 : verdicts ? 0.32 : 0.22,
+            fillOpacity: on ? 0.42 : selected ? 0.1 : verdicts ? (basemap ? 0.55 : 0.85) : 0.22,
           };
         }}
         onEachFeature={(f, layer) => {
@@ -165,7 +182,7 @@ export default function ExploreMap({
         <Marker
           key={`t-${t.id}-${selected === t.id}-${weather ? weatherDay : "x"}-${zoom >= 10.5}`}
           position={(anchors as unknown as Record<string, [number, number]>)[t.id] ?? t.center}
-          icon={townBadge(t.id, selected === t.id, verdicts?.[t.id]?.day.code, verdicts ? VERDICT[verdicts[t.id].verdict].color : undefined, zoom >= 10.5)}
+          icon={townBadge(t.id, selected === t.id, verdicts?.[t.id]?.day.code, verdicts ? VERDICT[verdicts[t.id].verdict].color : undefined, zoom >= 10.5, verdicts?.[t.id]?.day.max)}
           zIndexOffset={selected === t.id ? 900 : 600}
           eventHandlers={{ click: () => onSelect(t.id) }}
         >

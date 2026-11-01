@@ -8,6 +8,7 @@ import outline from "@/data/catanduanes-outline.json";
 type Ring = [number, number][];
 
 const polys = (outline as unknown as { geometry: { type: string; coordinates: number[][][][] | number[][][] } }).geometry;
+const maskRenderer = typeof window !== "undefined" ? L.svg({ padding: 3, pane: "island-mask" }) : undefined;
 const outerRings: Ring[] = (polys.type === "Polygon" ? [polys.coordinates as number[][][]] : (polys.coordinates as number[][][][])).map(
   (p) => p[0].map(([lng, lat]) => [lat, lng] as [number, number]),
 );
@@ -37,13 +38,19 @@ export function IslandMask({ lock = true }: { lock?: boolean }) {
     L.Util.setOptions(map, { maxBoundsViscosity: 0.85 });
     map.setMinZoom(9);
     map.getContainer().style.background = SEA;
+    // the mask's SVG layer is sized from the map's size at creation; re-measure once layout settles
+    const t = [150, 600, 1500].map((ms) => setTimeout(() => {
+      map.invalidateSize();
+      map.fire("moveend");
+    }, ms));
+    return () => t.forEach(clearTimeout);
   }, [map, lock]);
 
   return (
     <Pane name="island-mask" style={{ zIndex: 350, pointerEvents: "none" }}>
       <Polygon
         positions={positions}
-        pathOptions={{ stroke: false, fillColor: SEA, fillOpacity: 1, fillRule: "evenodd", interactive: false }}
+        pathOptions={{ stroke: false, fillColor: SEA, fillOpacity: 1, fillRule: "evenodd", interactive: false, noClip: true, renderer: maskRenderer } as L.PathOptions}
       />
       {outerRings.map((r, i) => (
         <Polyline key={i} positions={[...r, r[0]]} pathOptions={{ color: "#0a6cbf", opacity: 0.18, weight: 6, interactive: false }} />
