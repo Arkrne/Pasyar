@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import {
   ArrowRight,
   BadgeCheck,
@@ -112,102 +112,392 @@ export function IslandFacts() {
 }
 
 export function HowItWorks() {
+  const listRef = useRef<HTMLOListElement>(null);
+  const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 75%", "end 55%"] });
+  const fill = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   const steps = [
     {
       icon: Sparkles,
+      color: ISLAND.sunset,
       title: "Answer five questions",
       body: "Days, who's coming, budget, what you love and how you're getting here. One question per screen.",
-      img: "/photos/binurong-ridge.webp",
+      mock: <QuestionMock />,
     },
     {
       icon: MapPinned,
+      color: ISLAND.deepTeal,
       title: "Get a real plan",
       body: "Only places that exist and operators who answer their phone. Drive times, fees and a running total against your budget.",
-      img: "/photos/hiyop-hills.webp",
+      mock: <PlanMock />,
     },
     {
       icon: QrCode,
+      color: ISLAND.ocean,
       title: "Book it in one go",
       body: "Guides, rooms, vans and boats in one GCash or Maya checkout. QR tickets work offline.",
-      img: "/photos/puraran-palms.webp",
+      mock: <TicketMock />,
     },
   ];
+
   return (
-    <section className="mood-lagoon py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
-        <Reveal>
-          <h2 className="t-display max-w-3xl text-balance">From a blank page to a booked trip in about a minute.</h2>
-        </Reveal>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {steps.map((s, k) => (
-            <Reveal key={s.title} delay={k * 0.08}>
-              <Tilt className="h-full rounded-[22px]">
-              <article className="card hover-zoom h-full overflow-hidden">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Image src={s.img} alt="" fill sizes="(max-width:768px) 100vw, 33vw" className="object-cover" />
-                  <span className="glass absolute left-4 top-4 grid size-10 place-items-center rounded-full">
-                    <s.icon className="size-5 text-ink" />
-                  </span>
-                </div>
-                <div className="p-6">
-                  <p className="tabular text-[13px] font-semibold text-muted">Step {k + 1}</p>
-                  <h3 className="t-headline mt-1">{s.title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-muted">{s.body}</p>
-                </div>
-              </article>
-              </Tilt>
-            </Reveal>
-          ))}
+    <section className="mood-lagoon relative overflow-hidden py-24 md:py-36">
+      {/* soft ambient blobs so the section isn't a flat wash */}
+      <div aria-hidden className="pointer-events-none absolute -left-40 top-10 size-[520px] rounded-full bg-[radial-gradient(circle,rgba(73,194,159,.22),transparent_65%)]" />
+      <div aria-hidden className="pointer-events-none absolute -right-32 bottom-0 size-[480px] rounded-full bg-[radial-gradient(circle,rgba(234,117,60,.16),transparent_65%)]" />
+
+      <div className="relative mx-auto grid max-w-6xl gap-14 px-5 md:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        {/* Left: sticky pitch */}
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <Reveal>
+            <p className="t-eyebrow mb-4 flex items-center gap-2 text-deep-teal">
+              <span className="h-px w-8 bg-deep-teal" /> How it works
+            </p>
+            <h2 className="t-display text-balance">
+              From a blank page to a booked trip in <span className="text-gradient-island">about a minute.</span>
+            </h2>
+            <p className="t-lead mt-6 max-w-md text-ink-2/80">
+              Three steps, no spreadsheets, no twenty open Facebook tabs.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-5">
+              <Button href="/plan" size="lg">
+                Try it now <ArrowRight className="size-4" />
+              </Button>
+              <Link href="/explore" className="pressable inline-flex items-center gap-1 text-[15px] font-semibold text-ocean">
+                Browse first <ArrowRight className="size-4" />
+              </Link>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1} className="mt-12 hidden lg:block">
+            <figure className="relative w-[82%] -rotate-3 rounded-[22px] bg-white p-2 pb-9 shadow-[0_30px_60px_-24px_rgba(15,126,108,.45)] transition-transform duration-500 hover:rotate-0">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[16px]">
+                <Image src="/photos/binurong-ridge.webp" alt="Binurong Point ridge above the Pacific" fill sizes="360px" className="object-cover" />
+              </div>
+              <figcaption className="absolute bottom-2.5 left-3 text-[13px] font-semibold text-ink-2">Where your plan might start</figcaption>
+            </figure>
+          </Reveal>
         </div>
-        <Reveal className="mt-10 flex justify-center">
-          <Button href="/plan" size="lg">
-            Try it now <ArrowRight className="size-4" />
-          </Button>
-        </Reveal>
+
+        {/* Right: route timeline */}
+        <ol ref={listRef} className="relative space-y-10 md:space-y-14">
+          {/* dashed route + scroll-driven fill */}
+          <span aria-hidden className="absolute bottom-8 left-[27px] top-8 w-0 border-l-2 border-dashed border-deep-teal/25" />
+          <motion.span
+            aria-hidden
+            style={{ scaleY: fill }}
+            className="absolute bottom-8 left-[26px] top-8 w-1 origin-top rounded-full bg-gradient-to-b from-sunset via-deep-teal to-ocean"
+          />
+          {steps.map((s, k) => (
+            <li key={s.title} className="relative grid grid-cols-[56px_1fr] gap-5">
+              <Reveal delay={k * 0.05}>
+                <span
+                  className="relative z-10 grid size-14 place-items-center rounded-2xl text-white shadow-[0_14px_28px_-12px_var(--c)] ring-4 ring-white"
+                  style={{ background: s.color, ["--c" as string]: s.color }}
+                >
+                  <s.icon className="size-6" />
+                </span>
+              </Reveal>
+              <Reveal delay={k * 0.05 + 0.06}>
+                <article className="group rounded-[26px] bg-white/85 p-6 shadow-[0_24px_50px_-30px_rgba(15,80,90,.45)] ring-1 ring-black/[.04] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_34px_60px_-30px_rgba(15,80,90,.55)] md:p-7">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-display text-[44px] font-bold leading-none tabular" style={{ color: s.color }}>
+                      0{k + 1}
+                    </span>
+                    <h3 className="t-headline">{s.title}</h3>
+                  </div>
+                  <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-muted">{s.body}</p>
+                  <div className="mt-6">{s.mock}</div>
+                </article>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-/* ------------------------------------------------------------ */
-export function TownsRail() {
+function QuestionMock() {
+  const opts = ["Just me", "The two of us", "Barkada", "Family"];
   return (
-    <section className="py-24 md:py-32">
-      <div className="mx-auto flex max-w-6xl items-end justify-between gap-4 px-5 md:px-8">
-        <Reveal>
-          <p className="t-eyebrow mb-3 text-muted">Explore</p>
-          <h2 className="t-display max-w-2xl text-balance">Eleven towns. Tap one to see what it&apos;s known for.</h2>
-        </Reveal>
-        <Link href="/explore" className="pressable hidden shrink-0 items-center gap-1 text-[15px] font-semibold text-ocean md:flex">
+    <div className="rounded-2xl bg-sand/70 p-4 ring-1 ring-black/[.04]">
+      <div className="flex items-center justify-between text-[12px] font-semibold text-muted">
+        <span>Question 2 of 5</span>
+        <span className="flex gap-1">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <span key={i} className={cn("h-1.5 rounded-full", i < 2 ? "w-5 bg-sunset" : "w-1.5 bg-black/10")} />
+          ))}
+        </span>
+      </div>
+      <p className="mt-3 font-display text-[19px] font-semibold text-ink">Who&apos;s coming?</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {opts.map((o, i) => (
+          <span
+            key={o}
+            className={cn(
+              "rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors",
+              i === 1 ? "bg-sunset text-white shadow-[0_8px_18px_-8px_rgba(234,117,60,.8)]" : "bg-white text-ink-2 ring-1 ring-black/[.06]",
+            )}
+          >
+            {o}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PlanMock() {
+  const rows = [
+    { t: "08:30", n: "Binurong Point hike", m: "Guide booked" },
+    { t: "12:00", n: "Lunch in Baras", m: "35 min drive" },
+    { t: "14:30", n: "Puraran Beach", m: "Surf lesson" },
+  ];
+  return (
+    <div className="rounded-2xl bg-mint-wash/80 p-4 ring-1 ring-black/[.04]">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-deep-teal">Sample · Day 1</p>
+      <ul className="mt-3 space-y-2.5">
+        {rows.map((r) => (
+          <li key={r.t} className="flex items-center gap-3 text-[14px]">
+            <span className="tabular w-12 shrink-0 font-semibold text-muted">{r.t}</span>
+            <span className="size-2 shrink-0 rounded-full bg-deep-teal" />
+            <span className="flex-1 font-semibold text-ink">{r.n}</span>
+            <span className="hidden text-[12px] text-muted sm:block">{r.m}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4">
+        <div className="flex justify-between text-[12px] font-semibold">
+          <span className="text-muted">Running total</span>
+          <span className="tabular text-ink">₱6,840 <span className="text-muted">/ ₱9,000</span></span>
+        </div>
+        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white">
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "76%" }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1], delay: 0.2 }}
+            className="h-full rounded-full bg-gradient-to-r from-lagoon to-deep-teal"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TicketMock() {
+  return (
+    <div className="flex overflow-hidden rounded-2xl bg-white ring-1 ring-black/[.06]">
+      <div className="relative w-[38%] shrink-0">
+        <Image src="/photos/puraran-palms.webp" alt="" fill sizes="200px" className="object-cover" />
+      </div>
+      <div className="relative flex flex-1 items-center gap-4 border-l-2 border-dashed border-black/10 p-4">
+        <span aria-hidden className="absolute -left-[9px] -top-2 size-4 rounded-full bg-sky-wash" />
+        <span aria-hidden className="absolute -bottom-2 -left-[9px] size-4 rounded-full bg-sky-wash" />
+        <div className="grid size-16 shrink-0 place-items-center rounded-xl bg-ocean/[.07]">
+          <QrCode className="size-10 text-ocean" />
+        </div>
+        <div className="min-w-0">
+          <p className="truncate font-display text-[16px] font-semibold text-ink">Boat + guide, Baras</p>
+          <p className="mt-0.5 text-[12px] text-muted">Paid with GCash</p>
+          <p className="mt-2 inline-flex items-center gap-1 rounded-md bg-leaf/10 px-2 py-0.5 text-[11px] font-semibold text-leaf">
+            <WifiOff className="size-3" /> Works offline
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------ */
+const REGION_LABEL = { south: "South", east: "Pacific side", north: "North" } as Record<string, string>;
+const TOWN_CYCLE_MS = 5000;
+
+export function TownsRail() {
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { amount: 0.35 });
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [touched, setTouched] = useState(false);
+  const autoplay = inView && !touched && !reduce;
+
+  useEffect(() => {
+    if (!autoplay) return;
+    const id = setTimeout(() => setActive((a) => (a + 1) % TOWNS.length), TOWN_CYCLE_MS);
+    return () => clearTimeout(id);
+  }, [autoplay, active]);
+
+  const pick = (k: number) => {
+    setTouched(true);
+    setActive(k);
+  };
+
+  const t = TOWNS[active];
+  const st = TOWN_STYLE[t.id];
+
+  return (
+    <section ref={ref} className="relative py-24 md:py-32">
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <div className="flex items-end justify-between gap-4">
+          <Reveal>
+            <p className="t-eyebrow mb-4 flex items-center gap-2 text-sunset">
+              <span className="h-px w-8 bg-sunset" /> Explore
+            </p>
+            <h2 className="t-display max-w-2xl text-balance">
+              Eleven towns. <span className="text-gradient-island">Each one known for something.</span>
+            </h2>
+          </Reveal>
+          <Link href="/explore" className="pressable hidden shrink-0 items-center gap-1 text-[15px] font-semibold text-ocean md:flex">
+            Open the map <ArrowRight className="size-4" />
+          </Link>
+        </div>
+
+        <div className="mt-12 grid gap-6 lg:grid-cols-[280px_1fr] lg:gap-10">
+          {/* Town index */}
+          <ol
+            role="tablist"
+            aria-label="Towns of Catanduanes"
+            className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 pb-1 lg:mx-0 lg:flex-col lg:gap-0 lg:overflow-visible lg:px-0"
+          >
+            {TOWNS.map((town, k) => {
+              const on = k === active;
+              const c = TOWN_STYLE[town.id].color;
+              return (
+                <li key={town.id} className="shrink-0">
+                  <button
+                    role="tab"
+                    aria-selected={on}
+                    onClick={() => pick(k)}
+                    onMouseEnter={() => pick(k)}
+                    className={cn(
+                      "pressable group relative flex w-full items-center gap-3 rounded-full px-4 py-2 text-left outline-none transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-ocean",
+                      "lg:rounded-xl lg:px-3 lg:py-2.5",
+                      on ? "bg-white shadow-[0_10px_30px_-14px_rgba(16,40,70,.35)]" : "bg-white/50 hover:bg-white/80 lg:bg-transparent",
+                    )}
+                  >
+                    {on && (
+                      <motion.span
+                        layoutId="town-bar"
+                        className="absolute inset-y-2 left-0 hidden w-1 rounded-full lg:block"
+                        style={{ background: c }}
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                      />
+                    )}
+                    <span className="tabular hidden w-6 text-[12px] font-semibold text-faint lg:block">{String(k + 1).padStart(2, "0")}</span>
+                    <span className="size-2 rounded-full lg:hidden" style={{ background: c }} />
+                    <span
+                      className={cn(
+                        "whitespace-nowrap font-display text-[15px] font-semibold transition-all duration-300 lg:text-[20px]",
+                        on ? "lg:translate-x-1" : "text-ink-2/70 group-hover:text-ink",
+                      )}
+                      style={on ? { color: c } : undefined}
+                    >
+                      {town.name}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* Stage */}
+          <div className="relative">
+            <div className="relative h-[460px] overflow-hidden rounded-[32px] bg-ink shadow-[0_40px_80px_-40px_rgba(16,40,70,.6)] md:h-[580px]">
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, scale: 1.08 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.9, ease: [0.23, 1, 0.32, 1] }}
+                  className="absolute inset-0"
+                >
+                  <Image src={t.cover} alt={t.name} fill sizes="(max-width:1024px) 100vw, 860px" className="object-cover" priority={active === 0} />
+                </motion.div>
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,14,22,.88)_0%,rgba(8,14,22,.35)_45%,transparent_72%)]" />
+              <div
+                className="absolute inset-0 opacity-40 mix-blend-soft-light transition-[background] duration-700"
+                style={{ background: `radial-gradient(120% 80% at 0% 100%, ${st.color}, transparent 60%)` }}
+              />
+
+              {/* progress segments */}
+              <div className="absolute inset-x-5 top-5 flex gap-1.5 md:inset-x-7 md:top-7">
+                {TOWNS.map((town, k) => (
+                  <span key={town.id} className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/25">
+                    {k < active && <span className="absolute inset-0 bg-white/80" />}
+                    {k === active && (
+                      <motion.span
+                        key={`${t.id}-${autoplay}`}
+                        className="absolute inset-0 origin-left bg-white"
+                        initial={{ scaleX: autoplay ? 0 : 1 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ duration: autoplay ? TOWN_CYCLE_MS / 1000 : 0, ease: "linear" }}
+                      />
+                    )}
+                  </span>
+                ))}
+              </div>
+
+              {/* copy */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
+                  className="absolute inset-x-0 bottom-0 p-6 text-white md:p-10"
+                >
+                  <p className="tabular flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-white/70">
+                    <span>{String(active + 1).padStart(2, "0")} / {TOWNS.length}</span>
+                    <span className="h-px w-6 bg-white/40" />
+                    <span>{REGION_LABEL[t.region] ?? t.region}</span>
+                  </p>
+                  <h3 className="mt-2 font-display text-[56px] font-bold leading-[0.9] tracking-[-0.03em] md:text-[96px]">{t.name}</h3>
+                  <p className="mt-3 max-w-[40ch] text-[16px] leading-snug text-white/90 md:text-[19px]">{t.tagline}</p>
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+                    <span className="glass-dark inline-flex items-center gap-3 rounded-2xl py-1.5 pl-1.5 pr-4">
+                      <Tile name={st.icon} bg={st.color} size={36} accent="#F6CB67" />
+                      <span className="text-[13px] leading-tight text-white/90">{st.why}</span>
+                    </span>
+                    <Link
+                      href={`/explore?town=${t.id}`}
+                      className="pressable group inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-[15px] font-semibold text-ink transition-transform hover:scale-[1.03]"
+                    >
+                      Explore {t.name}
+                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* gallery polaroids peeking off the stage */}
+            <div className="pointer-events-none absolute -right-4 top-16 hidden xl:block">
+              <AnimatePresence mode="popLayout">
+                {t.gallery.slice(0, 2).map((src, k) => (
+                  <motion.figure
+                    key={`${t.id}-${src}`}
+                    initial={{ opacity: 0, x: 30, rotate: 0 }}
+                    animate={{ opacity: 1, x: 0, rotate: k ? -5 : 6 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ type: "spring", bounce: 0.3, duration: 0.8, delay: 0.15 + k * 0.08 }}
+                    className={cn("relative w-[150px] rounded-[14px] bg-white p-1.5 shadow-[0_20px_40px_-18px_rgba(16,40,70,.55)]", k > 0 && "-mt-6 ml-8")}
+                  >
+                    <div className="relative aspect-square overflow-hidden rounded-[10px]">
+                      <Image src={src} alt="" fill sizes="150px" className="object-cover" />
+                    </div>
+                  </motion.figure>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+
+        <Link href="/explore" className="pressable mt-6 flex items-center gap-1 text-[15px] font-semibold text-ocean md:hidden">
           Open the map <ArrowRight className="size-4" />
         </Link>
-      </div>
-      <div className="no-scrollbar snap-row mt-10 flex gap-4 overflow-x-auto px-5 pb-4 md:px-[max(2rem,calc((100vw-72rem)/2+2rem))]">
-        {TOWNS.map((t, k) => (
-          <motion.div
-            key={t.id}
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", bounce: 0, duration: 0.7, delay: Math.min(k, 5) * 0.05 }}
-          >
-            <Link
-              href={`/explore?town=${t.id}`}
-              className="pressable hover-zoom group relative block h-[380px] w-[260px] shrink-0 overflow-hidden rounded-[24px] md:h-[440px] md:w-[300px]"
-            >
-              <Image src={t.cover} alt={t.name} fill sizes="300px" className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
-              <span className="absolute left-4 top-4 transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110">
-                <Tile name={TOWN_STYLE[t.id].icon} bg={TOWN_STYLE[t.id].color} size={44} accent="#F6CB67" />
-              </span>
-              <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-white/70">{t.region === "south" ? "South" : t.region === "east" ? "Pacific side" : "North"}</p>
-                <h3 className="mt-1 text-[26px] font-bold tracking-[-0.02em]">{t.name}</h3>
-                <p className="mt-1 text-[14px] leading-snug text-white/85">{t.tagline}</p>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
       </div>
     </section>
   );
