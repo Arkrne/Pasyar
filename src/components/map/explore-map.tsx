@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { GeoJSON, MapContainer, Marker, Tooltip, useMap } from "react-leaflet";
+import { useState } from "react";
+import { GeoJSON, MapContainer, Marker, Tooltip, useMap, useMapEvents } from "react-leaflet";
+import anchors from "@/data/town-anchors.json";
+import { ISLAND_BOUNDS } from "./island-mask";
 import L from "leaflet";
 import type { Feature, GeoJsonObject } from "geojson";
 import { geo } from "@/lib/geo";
@@ -14,6 +17,7 @@ import { rankTowns, VERDICT } from "@/lib/forecast";
 import { IslandIcon } from "@/components/icons";
 import { WeatherGlyph } from "@/components/weather-glyph";
 import { Basemap } from "./basemap";
+import { IslandMask } from "./island-mask";
 
 const KIND_ICON: Record<string, Parameters<typeof IslandIcon>[0]["name"]> = {
   beach: "palm",
@@ -41,18 +45,19 @@ function placeIcon(p: Place, dim: boolean, hot: boolean) {
   });
 }
 
-function townBadge(id: TownId, selected: boolean, wxCode?: number, verdictColor?: string) {
+function townBadge(id: TownId, selected: boolean, wxCode?: number, verdictColor?: string, showLabel = true) {
   const st = TOWN_STYLE[id];
   const inner = wxCode != null
     ? renderToStaticMarkup(<WeatherGlyph code={wxCode} size={30} still />)
     : renderToStaticMarkup(<IslandIcon name={st.icon} size={22} color="#fff" accent="#F6CB67" />);
   const bg = wxCode != null ? "#fff" : st.color;
+  const size = selected ? 46 : showLabel ? 38 : 32;
   const ring = verdictColor ?? "#fff";
   return L.divIcon({
     className: "",
     html: `<div style="display:flex;flex-direction:column;align-items:center;transform:translateY(-6px)">
-      <div style="width:${selected ? 46 : 38}px;height:${selected ? 46 : 38}px;border-radius:14px;background:${bg};display:grid;place-items:center;box-shadow:0 0 0 3px ${ring},0 10px 22px -8px rgba(0,0,0,.35);animation:pin-in 500ms cubic-bezier(.23,1,.32,1) both">${inner}</div>
-      <span style="margin-top:4px;font:600 11px/1 var(--font-sans);color:#1d1d1f;background:rgba(255,255,255,.9);padding:3px 7px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.08);white-space:nowrap">${TOWN_BY_ID[id].name}</span>
+      <div style="width:${size}px;height:${size}px;border-radius:14px;background:${bg};display:grid;place-items:center;box-shadow:0 0 0 3px ${ring},0 10px 22px -8px rgba(0,0,0,.35);animation:pin-in 500ms cubic-bezier(.23,1,.32,1) both">${inner}</div>
+      ${showLabel || selected ? `<span style="margin-top:4px;font:600 11px/1 var(--font-sans);color:#1d1d1f;background:rgba(255,255,255,.9);padding:3px 7px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.08);white-space:nowrap">${TOWN_BY_ID[id].name}</span>` : ""}
     </div>`,
     iconSize: [80, 70],
     iconAnchor: [40, 30],
@@ -65,14 +70,20 @@ function Controller({ selected }: { selected: TownId | null }) {
   useEffect(() => {
     const pad = window.innerWidth < 768 ? 20 : 40;
     if (!selected) {
-      const all = L.geoJSON(geo as GeoJsonObject).getBounds();
+      const all = ISLAND_BOUNDS;
       if (first.current) {
-        map.invalidateSize();
-        map.fitBounds(all, { padding: [pad, pad] });
-        setTimeout(() => {
+        const fit = () => {
           map.invalidateSize();
           map.fitBounds(all, { padding: [pad, pad] });
-        }, 120);
+        };
+        fit();
+        // the container can still be settling (fonts, sticky layout); refit until the user interacts
+        let touched = false;
+        const stop = () => (touched = true);
+        map.once("dragstart zoomstart", stop);
+        const ro = new ResizeObserver(() => !touched && fit());
+        ro.observe(map.getContainer());
+        setTimeout(() => ro.disconnect(), 3000);
       } else map.flyToBounds(all, { padding: [pad, pad], duration: 0.8 });
       first.current = false;
       return;
@@ -113,10 +124,12 @@ export default function ExploreMap({
     return Object.fromEntries(rankTowns(weather, weatherDay).map((r) => [r.town.id, r])) as Record<TownId, ReturnType<typeof rankTowns>[number]>;
   }, [weather, weatherDay]);
   const key = `geo-${selected ?? "none"}-${weather ? weatherDay : "x"}`;
+  const [zoom, setZoom] = useState(10);
 
   return (
     <MapContainer center={[13.8, 124.25]} zoom={10} zoomControl={false} scrollWheelZoom className="h-full w-full" attributionControl>
       <Basemap />
+      <IslandMask />
       <GeoJSON
         key={key}
         data={geo as GeoJsonObject}
@@ -147,11 +160,12 @@ export default function ExploreMap({
           });
         }}
       />
+      <ZoomWatch onZoom={setZoom} />
       {TOWNS.map((t) => (
         <Marker
-          key={`t-${t.id}-${selected === t.id}-${weather ? weatherDay : "x"}`}
-          position={t.center}
-          icon={townBadge(t.id, selected === t.id, verdicts?.[t.id]?.day.code, verdicts ? VERDICT[verdicts[t.id].verdict].color : undefined)}
+          key={`t-${t.id}-${selected === t.id}-${weather ? weatherDay : "x"}-${zoom >= 10.5}`}
+          position={(anchors as unknown as Record<string, [number, number]>)[t.id] ?? t.center}
+          icon={townBadge(t.id, selected === t.id, verdicts?.[t.id]?.day.code, verdicts ? VERDICT[verdicts[t.id].verdict].color : undefined, zoom >= 10.5)}
           zIndexOffset={selected === t.id ? 900 : 600}
           eventHandlers={{ click: () => onSelect(t.id) }}
         >
@@ -182,4 +196,9 @@ export default function ExploreMap({
       <Controller selected={selected} />
     </MapContainer>
   );
+}
+
+function ZoomWatch({ onZoom }: { onZoom: (z: number) => void }) {
+  const map = useMapEvents({ zoomend: () => onZoom(map.getZoom()) });
+  return null;
 }

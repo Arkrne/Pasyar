@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, Marker, Polyline, useMap, Tooltip } from "react-leaflet";
 import { Basemap } from "./basemap";
+import { IslandMask } from "./island-mask";
+import { roadRoute, type RoadRoute } from "@/lib/routing";
 import L from "leaflet";
 import type { DayPlan } from "@/lib/planner";
 
@@ -79,7 +81,7 @@ function DrawnRoute({ line, color, animate, weight = 4 }: { line: [number, numbe
     }
     let raf = 0;
     const start = performance.now();
-    const dur = 600 + line.length * 6;
+    const dur = Math.min(2200, 700 + line.length * 2.5);
     const tick = (t: number) => {
       const p = Math.min(1, (t - start) / dur);
       const e = 1 - Math.pow(1 - p, 3);
@@ -92,7 +94,9 @@ function DrawnRoute({ line, color, animate, weight = 4 }: { line: [number, numbe
   }, [line, animate]);
   return (
     <>
-      <Polyline positions={line.slice(0, n)} pathOptions={{ color: "#ffffff", weight: weight + 4, opacity: 0.9, className: "route-line" }} />
+      {/* Google-Maps-style: white casing, dark edge, bright line */}
+      <Polyline positions={line.slice(0, n)} pathOptions={{ color: "#ffffff", weight: weight + 6, opacity: 1, className: "route-line" }} />
+      <Polyline positions={line.slice(0, n)} pathOptions={{ color: "#0b2e4f", weight: weight + 2.5, opacity: 0.35, className: "route-line" }} />
       <Polyline positions={line.slice(0, n)} pathOptions={{ color, weight, opacity: 1, className: "route-line" }} />
       {n >= line.length && <Polyline positions={line} pathOptions={{ color: "#ffffff", weight: 2, opacity: 0.9, className: "route-flow" }} />}
     </>
@@ -101,7 +105,31 @@ function DrawnRoute({ line, color, animate, weight = 4 }: { line: [number, numbe
 
 export default function TripMap({ days, active, onPick }: { days: DayPlan[]; active: number; onPick?: (placeId: string) => void }) {
   const per = useMemo(() => days.map((d) => pointsOf(d)), [days]);
-  const lines = useMemo(() => per.map((p) => curved(p)), [per]);
+  const [roads, setRoads] = useState<(RoadRoute | null)[]>([]);
+  useEffect(() => {
+    let alive = true;
+    // fetch the active day first so it draws on real roads right away
+    const order = [active, ...per.map((_, i) => i).filter((i) => i !== active)];
+    order.forEach((i, k) => {
+      const pts = per[i].map((p) => [p.lat, p.lng] as [number, number]);
+      setTimeout(() => {
+        roadRoute(pts).then((r) => {
+          if (!alive || !r) return;
+          setRoads((prev) => {
+            const next = [...prev];
+            next[i] = r;
+            return next;
+          });
+        });
+      }, k * 250);
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- refetch only when the plan changes
+  }, [per]);
+  const lines = useMemo(() => per.map((p, i) => roads[i]?.coords ?? curved(p)), [per, roads]);
+  const activeRoad = roads[active];
   const all = useMemo(() => per.flat().map((p) => [p.lat, p.lng] as [number, number]), [per]);
   const activePts = useMemo(() => (per[active] ?? []).map((p) => [p.lat, p.lng] as [number, number]), [per, active]);
 
@@ -115,12 +143,14 @@ export default function TripMap({ days, active, onPick }: { days: DayPlan[]; act
       attributionControl
     >
       <Basemap />
+      <IslandMask />
       {lines.map((ln, i) =>
         i === active ? null : (
-          <Polyline key={`bg-${i}`} positions={ln} pathOptions={{ color: dayColor(i), weight: 3, opacity: 0.28, dashArray: "2 8", className: "route-line" }} />
+          <Polyline key={`bg-${i}-${ln.length}`} positions={ln} pathOptions={{ color: dayColor(i), weight: 3, opacity: 0.35, dashArray: "2 8", className: "route-line" }} />
         ),
       )}
-      {lines[active] && <DrawnRoute key={`r-${active}-${days[active]?.items.length}`} line={lines[active]} color={dayColor(active)} animate />}
+      {lines[active] && <DrawnRoute key={`r-${active}-${lines[active].length}`} line={lines[active]} color={dayColor(active)} animate weight={5} />}
+      {activeRoad && <RoadBadge road={activeRoad} color={dayColor(active)} day={active + 1} />}
       {per.map((pts, i) =>
         pts.map((p, k) => (
           <Marker
@@ -145,5 +175,28 @@ export default function TripMap({ days, active, onPick }: { days: DayPlan[]; act
       )}
       <Fit pts={activePts} all={all} />
     </MapContainer>
+  );
+}
+
+/** Distance and drive time for the active day, like the Google Maps route card. */
+function RoadBadge({ road, color, day }: { road: RoadRoute; color: string; day: number }) {
+  const h = Math.floor(road.minutes / 60);
+  const m = road.minutes % 60;
+  return (
+    <div className="leaflet-bottom leaflet-left" style={{ pointerEvents: "none" }}>
+      <div
+        className="leaflet-control glass-strong"
+        style={{ pointerEvents: "auto", margin: "0 0 12px 12px", borderRadius: 16, padding: "8px 12px", boxShadow: "0 8px 24px rgba(0,0,0,.12)", display: "flex", alignItems: "center", gap: 10 }}
+      >
+        <span style={{ width: 10, height: 10, borderRadius: 99, background: color, boxShadow: `0 0 0 3px ${color}33` }} />
+        <span style={{ fontSize: 13, lineHeight: 1.2 }}>
+          <b style={{ fontSize: 15 }}>{h ? `${h} h ${m} min` : `${m} min`}</b>
+          <br />
+          <span style={{ color: "#6e6e73" }}>
+            Day {day} · {road.km} km by road
+          </span>
+        </span>
+      </div>
+    </div>
   );
 }
