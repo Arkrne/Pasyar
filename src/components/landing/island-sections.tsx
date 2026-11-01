@@ -10,7 +10,6 @@ import { Tile, FloatingTiles } from "@/components/icons";
 import { FESTIVALS, MONTHS, MONTH_NAMES, SEASON_STYLE } from "@/data/festivals";
 import { TOWN_BY_ID } from "@/data/towns";
 import { TOWN_STYLE, ISLAND } from "@/data/palette";
-import { Fancy } from "@/components/fancy";
 
 export function ForecastSection() {
   return (
@@ -19,7 +18,7 @@ export function ForecastSection() {
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal>
           <p className="t-eyebrow mb-3 text-ocean">Live forecast</p>
-          <h2 className="t-display max-w-3xl text-balance">Rain in the north? The <Fancy icon="sun">sun</Fancy> is probably out in Baras.</h2>
+          <h2 className="t-display max-w-3xl text-balance">Rain in the north? The sun is probably out in Baras.</h2>
           <p className="t-lead mt-5 max-w-2xl text-muted">
             Pasyar checks the weather in all 11 towns and the waves at the surf and boat spots, then tells you where to head today.
           </p>
@@ -58,7 +57,7 @@ export function FestivalStrip() {
         <Reveal>
           <p className="t-eyebrow mb-3 text-sunset">Fiestas</p>
           <h2 className="t-display max-w-3xl text-balance">
-            Eleven towns, <span className="island-word">a</span> <Fancy hat>fiesta</Fancy> <span className="island-word">almost every month.</span>
+            Eleven towns, <span className="text-gradient-island">a fiesta almost every month.</span>
           </h2>
           <p className="t-lead mt-5 max-w-2xl text-muted">Crab parades in Panganiban, rooster dances in Bagamanoc, the whole island dancing on its birthday in October. Each one has a story.</p>
         </Reveal>

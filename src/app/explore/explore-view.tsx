@@ -41,7 +41,6 @@ import { WeatherGlyph } from "@/components/weather-glyph";
 import { planTrip } from "@/lib/planner";
 import { toast } from "@/components/toast";
 import { cn } from "@/lib/cn";
-import { Fancy } from "@/components/fancy";
 
 const ExploreMap = dynamic(() => import("@/components/map/explore-map"), { ssr: false, loading: () => <div className="skeleton h-full w-full" /> });
 
@@ -112,7 +111,7 @@ export function ExploreView() {
       <div className="pt-4 md:pt-6">
         <p className="t-eyebrow text-muted">Explore</p>
         <h1 className="t-display mt-1">
-          The island, <Fancy hat>town</Fancy> <span className="island-word">by town.</span>
+          The island, <span className="text-gradient-island">town by town.</span>
         </h1>
         <p className="t-lead mt-2 max-w-2xl text-muted">Tap a town on the map to see its history, food, festivals and the people who can take you around.</p>
         <div className="mt-4 flex flex-wrap gap-2">

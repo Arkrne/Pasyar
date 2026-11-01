@@ -29,7 +29,6 @@ import { cn } from "@/lib/cn";
 import { Tile, type IconName } from "@/components/icons";
 import { CountUp, Tilt } from "@/components/fx";
 import { ISLAND, TOWN_STYLE } from "@/data/palette";
-import { Fancy } from "@/components/fancy";
 
 /* ------------------------------------------------------------ */
 export function IslandFacts() {
@@ -44,7 +43,7 @@ export function IslandFacts() {
       <Reveal>
         <p className="t-eyebrow mb-4 text-muted">Catanduanes</p>
         <h2 className="t-display max-w-4xl text-balance">
-          The <Fancy hat>Land</Fancy> <span className="island-word">of the Howling Winds</span> faces the open Pacific. Most of it never shows up on a travel site.
+          The <span className="text-gradient-island">Land of the Howling Winds</span> faces the open Pacific. Most of it never shows up on a travel site.
         </h2>
       </Reveal>
       <Reveal delay={0.08}>
@@ -97,7 +96,7 @@ export function HowItWorks() {
     <section className="mood-lagoon py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <Reveal>
-          <h2 className="t-display max-w-3xl text-balance">From a blank page to a <Fancy icon="sun">booked trip</Fancy> in about a minute.</h2>
+          <h2 className="t-display max-w-3xl text-balance">From a blank page to a booked trip in about a minute.</h2>
         </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {steps.map((s, k) => (
@@ -137,7 +136,7 @@ export function TownsRail() {
       <div className="mx-auto flex max-w-6xl items-end justify-between gap-4 px-5 md:px-8">
         <Reveal>
           <p className="t-eyebrow mb-3 text-muted">Explore</p>
-          <h2 className="t-display max-w-2xl text-balance"><Fancy hat>Eleven</Fancy> towns. Tap one to see what it&apos;s known for.</h2>
+          <h2 className="t-display max-w-2xl text-balance">Eleven towns. Tap one to see what it&apos;s known for.</h2>
         </Reveal>
         <Link href="/explore" className="pressable hidden shrink-0 items-center gap-1 text-[15px] font-semibold text-ocean md:flex">
           Open the map <ArrowRight className="size-4" />
@@ -182,7 +181,7 @@ export function CommunityTeaser() {
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <Reveal>
           <p className="t-eyebrow mb-3 text-muted">Community</p>
-          <h2 className="t-display max-w-3xl text-balance">See a trip you like? <Fancy icon="heart">Copy it,</Fancy> change it, book it.</h2>
+          <h2 className="t-display max-w-3xl text-balance">See a trip you like? Copy it, change it, book it.</h2>
           <p className="t-lead mt-5 max-w-2xl text-muted">
             Every post links to the real itinerary behind it. Reviews only carry the verified badge when the writer booked and
             finished the trip through Pasyar.
@@ -244,7 +243,7 @@ export function StormSection() {
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <Reveal>
           <p className="t-eyebrow mb-3 text-[#7fc4ff]">Storm mode</p>
-          <h2 className="t-display max-w-3xl text-balance"><span className="island-word">Typhoons</span> are part of life here. Your plan should know that.</h2>
+          <h2 className="t-display max-w-3xl text-balance">Typhoons are part of life here. Your plan should know that.</h2>
           <p className="t-lead mt-5 max-w-2xl text-white/70">
             Pasyar checks live wind, rain and wave height for the island. When a storm comes in it pulls the boat trips and reef
             swims, moves you to churches, caves and river towns, and tells your operators before you have to.
@@ -345,7 +344,7 @@ export function OperatorSection() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 md:grid-cols-2 md:px-8">
         <Reveal>
           <p className="t-eyebrow mb-3 text-muted">Pasyar Business</p>
-          <h2 className="t-display text-balance">A free dashboard for the <Fancy hat>people</Fancy> who make the island work.</h2>
+          <h2 className="t-display text-balance">A free dashboard for the people who make the island work.</h2>
           <p className="t-lead mt-5 text-muted">
             Guides, homestays, boatmen and van drivers list for free. They see bookings arrive live, accept with one tap, and get
             paid out to GCash. Pasyar keeps 12% only when a booking comes through.
@@ -424,7 +423,7 @@ export function MoneySection() {
         <div className="grid gap-12 md:grid-cols-2">
           <Reveal>
             <p className="t-eyebrow mb-3 text-muted">Where your money goes</p>
-            <h2 className="t-display text-balance">Of every ₱1,000 you book, <Fancy>₱880</Fancy> stays with the person who hosts you.</h2>
+            <h2 className="t-display text-balance">Of every ₱1,000 you book, ₱880 stays with the person who hosts you.</h2>
           </Reveal>
           <Reveal delay={0.08} className="self-end">
             <div className="flex h-16 overflow-hidden rounded-2xl">
@@ -467,7 +466,7 @@ export function MarketTeaser() {
           <div className="grid items-center md:grid-cols-2">
             <div className="p-8 md:p-14">
               <p className="t-eyebrow mb-3 text-amber">Pasalubong</p>
-              <h2 className="t-display text-balance">Bring home the <Fancy hat>abacá</Fancy> capital.</h2>
+              <h2 className="t-display text-balance">Bring home the abacá capital.</h2>
               <p className="t-lead mt-5 text-muted">
                 Pinukpok bags from Baras, latik from Virac, tiger-grass brooms from Hitoma. Order ahead and pick it up on your way to
                 the airport.

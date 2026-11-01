@@ -9,7 +9,6 @@ import { Clouds } from "@/components/fx";
 import { WeatherGlyph } from "@/components/weather-glyph";
 import { useForecast, rankTowns, VERDICT } from "@/lib/forecast";
 import { cn } from "@/lib/cn";
-import { Fancy } from "@/components/fancy";
 
 const ExploreMap = dynamic(() => import("@/components/map/explore-map"), { ssr: false, loading: () => <div className="skeleton h-full w-full" /> });
 
@@ -28,7 +27,7 @@ export default function WeatherPage() {
           </motion.div>
           <div>
             <p className="t-eyebrow text-ocean">Island weather</p>
-            <h1 className="t-display mt-1">Where&apos;s the <Fancy hat>sun</Fancy> this week?</h1>
+            <h1 className="t-display mt-1">Where&apos;s the sun this week?</h1>
           </div>
         </div>
         <p className="t-lead relative mt-3 max-w-2xl text-muted">

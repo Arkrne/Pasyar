@@ -16,7 +16,6 @@ import { TOWN_BY_ID } from "@/data/towns";
 import { useStore, useHydrated } from "@/lib/store";
 import { planTrip } from "@/lib/planner";
 import { cn } from "@/lib/cn";
-import { Fancy } from "@/components/fancy";
 
 function ago(iso: string) {
   const d = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -46,7 +45,7 @@ export function CommunityView() {
       <div className="flex flex-wrap items-end justify-between gap-4 pt-4 md:pt-6">
         <div>
           <p className="t-eyebrow text-muted">Community</p>
-          <h1 className="t-display mt-1"><Fancy hat>Trips</Fancy> by people who went.</h1>
+          <h1 className="t-display mt-1">Trips by people who went.</h1>
         </div>
         <div className="flex gap-2">
           <Button variant="ghost" onClick={() => setReview(true)}>

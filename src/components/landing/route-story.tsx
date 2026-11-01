@@ -11,7 +11,6 @@ import type { TownId } from "@/data/types";
 import { Tile } from "@/components/icons";
 import route from "@/data/story-route.json";
 import { cn } from "@/lib/cn";
-import { Fancy } from "@/components/fancy";
 
 type Stop = { id: string; label: string; town: TownId; day: number; photo: string; xy: [number, number]; at: number };
 
@@ -103,7 +102,7 @@ export function RouteStory() {
           <div className="order-2 md:order-1">
             <p className="t-eyebrow mb-3 text-ocean">The reveal</p>
             <h2 className="t-display text-balance">
-              Watch your trip <Fancy hat>drive</Fancy> <span className="island-word">itself</span> across the island.
+              Watch your trip <span className="text-gradient-island">drive itself</span> across the island.
             </h2>
             <div className="relative mt-6 h-[140px] md:mt-8 md:h-[170px]">
               <AnimatePresence mode="wait">

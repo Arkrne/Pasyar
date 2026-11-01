@@ -9,7 +9,6 @@ import { useNow } from "./fx";
 import { FESTIVALS, MONTH_NAMES } from "@/data/festivals";
 import { TOWN_BY_ID } from "@/data/towns";
 import { ISLAND, TOWN_STYLE } from "@/data/palette";
-import { Fancy } from "@/components/fancy";
 
 const COLS = [
   { h: "Travel", l: [["Plan a trip", "/plan"], ["Explore the map", "/explore"], ["7-day weather", "/weather"], ["Fiesta calendar", "/calendar"], ["Community", "/community"], ["Pasalubong market", "/market"]] },
@@ -62,7 +61,7 @@ export function SiteFooter() {
             <div>
               <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-[#FFD48A]">Maogmang pag-abot</p>
               <h2 className="mt-2 max-w-xl text-balance text-[clamp(32px,4.6vw,58px)] font-bold leading-[1.02] tracking-[-0.035em]">
-                The <Fancy hat>island</Fancy> is waiting. <span className="island-word">Come find your corner of it.</span>
+                The island is waiting. <span className="text-gradient-island">Come find your corner of it.</span>
               </h2>
             </div>
             <div className="flex flex-wrap gap-3">

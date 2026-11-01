@@ -13,7 +13,6 @@ import { OPERATOR_BY_ID } from "@/data/operators";
 import { PLACE_BY_ID } from "@/data/places";
 import { toast } from "@/components/toast";
 import { cn } from "@/lib/cn";
-import { Fancy } from "@/components/fancy";
 
 const STATUS: Record<BookingStatus, { label: string; tone: "amber" | "leaf" | "coral" | "ocean"; icon: typeof Clock3 }> = {
   pending: { label: "Waiting for operator", tone: "amber", icon: Clock3 },
@@ -40,7 +39,7 @@ export default function TripsPage() {
     <Page>
       <div className="pt-4 md:pt-6">
         <p className="t-eyebrow text-muted">Trips</p>
-        <h1 className="t-display mt-1">Your <Fancy hat>tickets</Fancy> and plans.</h1>
+        <h1 className="t-display mt-1">Your tickets and plans.</h1>
         <p className="mt-2 flex items-center gap-2 text-[15px] text-muted">
           <WifiOff className="size-4" /> Everything on this page works without signal once you&apos;ve opened it.
         </p>

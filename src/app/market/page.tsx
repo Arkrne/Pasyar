@@ -11,7 +11,6 @@ import { PRODUCTS } from "@/data/content";
 import { TOWN_BY_ID } from "@/data/towns";
 import { useHydrated, useStore, peso } from "@/lib/store";
 import { cn } from "@/lib/cn";
-import { Fancy } from "@/components/fancy";
 
 const TILE: Record<string, { bg: string; icon: typeof Cookie }> = {
   "latik-pack": { bg: "linear-gradient(140deg,#f6e3c4,#e8b97a)", icon: Cookie },
@@ -57,7 +56,7 @@ export default function MarketPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-end p-6 text-white md:p-10">
             <p className="t-eyebrow text-white/75">Pasalubong market</p>
-            <h1 className="t-display mt-1 max-w-xl">Made in the <Fancy hat>abacá</Fancy> capital.</h1>
+            <h1 className="t-display mt-1 max-w-xl">Made in the abacá capital.</h1>
             <p className="mt-2 max-w-md text-[15px] text-white/85">
               Catanduanes grows more abacá than any other province. Buy straight from the weavers, farmers and cooks. Pick up in Virac or have it shipped.
             </p>
