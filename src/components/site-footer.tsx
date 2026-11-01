@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { MosaicBand, Tile } from "./icons";
+import { FooterWordmark } from "./footer-wordmark";
 import { useNow } from "./fx";
 import { FESTIVALS, MONTH_NAMES } from "@/data/festivals";
 import { TOWN_BY_ID } from "@/data/towns";
@@ -113,26 +114,9 @@ export function SiteFooter() {
         <MosaicBand size={30} className="[--bg:#0A1C2C]" />
       </div>
 
-      {/* giant wordmark */}
-      <div className="relative mx-auto max-w-[1400px] select-none overflow-hidden px-2" aria-hidden>
-        <motion.p
-          initial={{ y: "35%", opacity: 0 }}
-          whileInView={{ y: "0%", opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ type: "spring", bounce: 0, duration: 1.2 }}
-          className="pb-[0.04em] text-center font-black leading-[1.08] tracking-[-0.06em]"
-          style={{
-            fontSize: "clamp(96px, 24vw, 380px)",
-            background: "linear-gradient(100deg, #EA753C 0%, #F6CB67 28%, #49C29F 58%, #2B8FD6 85%)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            color: "transparent",
-            maskImage: "linear-gradient(180deg, #000 78%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(180deg, #000 78%, transparent 100%)",
-          }}
-        >
-          Pasyar
-        </motion.p>
+      {/* giant mosaic wordmark */}
+      <div className="relative mx-auto mt-6 max-w-[1300px] select-none px-4 pb-6 md:px-8">
+        <FooterWordmark />
       </div>
 
       <div className="relative border-t border-white/10">
