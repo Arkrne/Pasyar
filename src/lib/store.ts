@@ -320,7 +320,7 @@ export const peso = (n: number) => "₱" + Math.round(n).toLocaleString("en-PH")
 /** True once the persisted store has loaded on the client. Use it to avoid hydration flashes. */
 import { useEffect, useState } from "react";
 export function useHydrated() {
-  const [h, setH] = useState(() => (typeof window !== "undefined" ? useStore.persist.hasHydrated() : false));
+  const [h, setH] = useState(false);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time read of URL/cache/external state on mount
     if (useStore.persist.hasHydrated()) setH(true);

@@ -24,7 +24,8 @@ const DICT = {
 
 export type Key = keyof typeof DICT;
 export function t(key: Key, lang: Lang) {
-  return DICT[key][lang] ?? DICT[key].en;
+  void lang; // English only
+  return DICT[key].en;
 }
 export const LANGS: { id: Lang; label: string; short: string }[] = [
   { id: "en", label: "English", short: "EN" },

@@ -70,15 +70,6 @@ export default function ProfilePage() {
       </section>
 
       <section className="mt-8 overflow-hidden rounded-[24px] bg-white outline outline-1 outline-[var(--hairline)]">
-        <Row icon={Globe} label="Language">
-          <div className="flex rounded-full bg-surface p-0.5">
-            {LANGS.map((l) => (
-              <button key={l.id} onClick={() => setLang(l.id)} className={cn("pressable rounded-full px-3 py-1 text-[13px] font-semibold", lang === l.id && "bg-white shadow-[var(--shadow-sm)]")}>
-                {l.short}
-              </button>
-            ))}
-          </div>
-        </Row>
         <Row icon={CloudLightning} label="Simulate typhoon (demo)">
           <button role="switch" aria-checked={stormSim} onClick={() => setStormSim(!stormSim)} className={cn("relative h-[31px] w-[51px] rounded-full transition-colors", stormSim ? "bg-coral" : "bg-surface-2")}>
             <span className={cn("absolute top-[2px] size-[27px] rounded-full bg-white shadow transition-all duration-300", stormSim ? "left-[22px]" : "left-[2px]")} />

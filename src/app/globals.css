@@ -449,3 +449,15 @@ h2,
 h3 {
   font-family: var(--font-fredoka), var(--font-inter), ui-rounded, system-ui, sans-serif;
 }
+
+/* Never scroll sideways on any device */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+img,
+video,
+svg {
+  max-width: 100%;
+}

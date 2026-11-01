@@ -219,7 +219,7 @@ export default function CalendarPage() {
               </Button>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3 md:mx-0 md:px-0">
                 <Chip active={town === "all"} onClick={() => setTown("all")}>
                   All towns

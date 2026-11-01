@@ -122,9 +122,6 @@ export function TopNav({ overlay = false }: { overlay?: boolean }) {
           })}
         </ul>
         <div className="flex items-center gap-1.5">
-          <span className="hidden sm:block">
-            <LangSwitch />
-          </span>
           <Link href="/business" aria-label={t("business", lang)} title={t("business", lang)} className="pressable hidden size-10 place-items-center rounded-full text-ink-2 hover:bg-black/[0.05] xl:grid">
             <Briefcase className="size-[18px]" />
           </Link>
