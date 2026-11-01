@@ -291,7 +291,7 @@ function QuickStart() {
           </div>
         </div>
         <div className="hidden h-8 w-px bg-[var(--hairline-strong)] md:block" />
-        <div className="no-scrollbar -mx-1 hidden flex-1 gap-1.5 overflow-x-auto px-1 md:flex">
+        <div className="no-scrollbar -mx-1 hidden min-w-0 flex-1 gap-1.5 overflow-x-auto px-1 pr-6 [mask-image:linear-gradient(90deg,transparent_0,#000_10px,#000_calc(100%-28px),transparent)] md:flex">
           {INTERESTS.map((x) => {
             const on = draft.interests.includes(x.id);
             return (
@@ -307,12 +307,12 @@ function QuickStart() {
           })}
         </div>
         <div className="flex flex-1 justify-end gap-2 md:flex-none">
-          <Link href="/explore" className="pressable hidden h-11 items-center rounded-full bg-black/[0.05] px-4 text-[14px] font-semibold lg:inline-flex">
+          <Link href="/explore" className="pressable hidden h-11 shrink-0 items-center rounded-full bg-black/[0.05] px-4 text-[14px] font-semibold 2xl:inline-flex">
             Explore the map
           </Link>
           <button
             onClick={() => router.push(draft.interests.length ? "/plan?step=group" : "/plan")}
-            className="pressable inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-ocean px-5 text-[15px] font-semibold text-white hover:bg-ocean-ink md:flex-none"
+            className="pressable inline-flex h-11 flex-1 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ocean px-5 text-[15px] font-semibold text-white hover:bg-ocean-ink md:flex-none"
           >
             {t("planCta", lang)} <ArrowRight className="size-4" />
           </button>
