@@ -394,12 +394,7 @@ select {
   background: linear-gradient(180deg, #e8f4fd 0%, #f6fbff 100%);
 }
 
-.text-gradient-island {
-  background: linear-gradient(100deg, #ea753c 0%, #f6a54f 25%, #49c29f 60%, #2b8fd6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+
 
 /* Card that tilts toward the pointer (set by JS variables), with a soft sheen */
 .tilt {
@@ -437,4 +432,24 @@ select {
 
 .town-shape {
   transition: fill-opacity 300ms var(--ease-out), stroke-width 300ms var(--ease-out);
+}
+
+/* Island mosaic lettering, in the spirit of the Happy Island "LOVE" letters. */
+.text-gradient-island,
+.island-word {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2296%22%20height=%2296%22%3E%3Crect%20x=%220%22%20y=%220%22%20width=%2232%22%20height=%2232%22%20fill=%22%23EA753C%22/%3E%3Ccircle%20cx=%2216%22%20cy=%2216%22%20r=%229%22%20fill=%22%23F6CB67%22/%3E%3Crect%20x=%2232%22%20y=%220%22%20width=%2232%22%20height=%2232%22%20fill=%22%232B8FD6%22/%3E%3Cpath%20d=%22M36%2028L48%205L60%2028Z%22%20fill=%22%2349C29F%22/%3E%3Crect%20x=%2264%22%20y=%220%22%20width=%2232%22%20height=%2232%22%20fill=%22%23F6CB67%22/%3E%3Cpath%20d=%22M64%2032A32%2032%200%200%201%2096%200V32Z%22%20fill=%22%23BA091F%22/%3E%3Crect%20x=%220%22%20y=%2232%22%20width=%2232%22%20height=%2232%22%20fill=%22%2349C29F%22/%3E%3Cpath%20d=%22M2%2052A14%2014%200%200%201%2030%2052Z%22%20fill=%22%23F6CB67%22/%3E%3Crect%20x=%2232%22%20y=%2232%22%20width=%2232%22%20height=%2232%22%20fill=%22%23BA091F%22/%3E%3Cpath%20d=%22M48%2035L61%2048L48%2061L35%2048Z%22%20fill=%22%23F6A54F%22/%3E%3Crect%20x=%2264%22%20y=%2232%22%20width=%2232%22%20height=%2232%22%20fill=%22%236DB33F%22/%3E%3Cpath%20d=%22M64%2040H96M64%2050H96M64%2060H96%22%20stroke=%22%23F6CB67%22%20stroke-width=%224%22/%3E%3Crect%20x=%220%22%20y=%2264%22%20width=%2232%22%20height=%2232%22%20fill=%22%23F6A54F%22/%3E%3Ccircle%20cx=%2216%22%20cy=%2280%22%20r=%229%22%20fill=%22%232B8FD6%22/%3E%3Crect%20x=%2232%22%20y=%2264%22%20width=%2232%22%20height=%2232%22%20fill=%22%23E0569B%22/%3E%3Cpath%20d=%22M36%2092L48%2069L60%2092Z%22%20fill=%22%23F6CB67%22/%3E%3Crect%20x=%2264%22%20y=%2264%22%20width=%2232%22%20height=%2232%22%20fill=%22%230F7E6C%22/%3E%3Cpath%20d=%22M64%2096A32%2032%200%200%201%2096%2064V96Z%22%20fill=%22%2349C29F%22/%3E%3C/svg%3E"), linear-gradient(100deg, #ea753c 0%, #f6a54f 25%, #49c29f 60%, #2b8fd6 100%);
+  background-size: 0.92em 0.92em, 100% 100%;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  filter: drop-shadow(0 1.5px 0 rgba(70, 35, 10, 0.28)) drop-shadow(0 6px 14px rgba(234, 117, 60, 0.18));
+  animation: mosaic-drift 24s linear infinite;
+}
+@keyframes mosaic-drift {
+  to {
+    background-position: 3.68em 1.84em, 0 0;
+  }
 }

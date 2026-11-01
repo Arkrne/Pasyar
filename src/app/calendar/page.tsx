@@ -15,6 +15,7 @@ import type { TownId } from "@/data/types";
 import { useStore } from "@/lib/store";
 import { toast } from "@/components/toast";
 import { cn } from "@/lib/cn";
+import { Fancy } from "@/components/fancy";
 
 function colorOf(f: Festival) {
   return f.town === "province" ? ISLAND.sunset : TOWN_STYLE[f.town].color;
@@ -84,7 +85,7 @@ export default function CalendarPage() {
         />
         <p className="t-eyebrow relative text-sunset">Travel calendar</p>
         <h1 className="t-display relative mt-1 max-w-2xl">
-          When to come, and <span className="text-gradient-island">which fiesta to catch.</span>
+          When to come, and <span className="island-word">which</span> <Fancy hat>fiesta</Fancy> <span className="island-word">to catch.</span>
         </h1>
         <p className="t-lead relative mt-3 max-w-xl text-muted">Every town has a feast, and each one has a story. Pick a month to see the weather and what&apos;s on.</p>
 

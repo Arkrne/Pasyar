@@ -15,6 +15,7 @@ import { cn } from "@/lib/cn";
 import { Tile, type IconName } from "@/components/icons";
 import { ISLAND, MOSAIC } from "@/data/palette";
 import { useIntroDone } from "@/components/splash";
+import { Fancy } from "@/components/fancy";
 
 const SLIDES = [
   { src: "/photos/binurong-sunset.webp", caption: "Binurong Point, Baras" },
@@ -170,7 +171,7 @@ export function Hero() {
                 transition={{ delay: 0.95, type: "spring", bounce: 0, duration: 0.9 }}
                 className="max-w-2xl text-balance text-[clamp(22px,2.6vw,34px)] font-semibold leading-tight tracking-[-0.02em] text-ink"
               >
-                Rediscover the <span className="text-gradient-island">Land of the Howling Winds.</span>
+                Rediscover the <Fancy hat>Land</Fancy> <span className="island-word">of the Howling Winds.</span>
               </motion.p>
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: ready ? 1 : 0 }} transition={{ delay: 1.15, duration: 0.8 }} className="mt-3 max-w-md text-[15px] text-muted">
                 Surf, cliffs, stone churches and 11 towns that still feel undiscovered.
@@ -213,7 +214,7 @@ function Act2({ slide, setSlide }: { slide: number; setSlide: (n: number) => voi
         </p>
         <h2 className="t-hero max-w-5xl text-balance">
           Your Catanduanes trip,{" "}
-          <span className="bg-gradient-to-r from-[#FFE7A3] via-[#FFB27A] to-[#9FE7D2] bg-clip-text text-transparent">planned in 60 seconds.</span>
+          <span className="island-word">planned in</span> <Fancy hat>60</Fancy> <span className="island-word">seconds.</span>
         </h2>
         <p className="t-lead mt-5 max-w-xl text-white/85">{t("heroSub", lang)}</p>
         <div className="mt-6 hidden flex-wrap gap-2 md:flex">

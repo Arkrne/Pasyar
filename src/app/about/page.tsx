@@ -3,6 +3,7 @@ import Image from "next/image";
 import { CloudLightning, Layers, LineChart, Map, ShieldCheck, Users, WifiOff } from "lucide-react";
 import { Page } from "@/components/shell";
 import { Button, Reveal } from "@/components/ui";
+import { Fancy } from "@/components/fancy";
 
 export const metadata: Metadata = { title: "The pitch" };
 
@@ -39,7 +40,7 @@ export default function AboutPage() {
     <Page>
       <section className="pt-6">
         <p className="t-eyebrow text-ocean">DOST IGNITE Catanduanes 2026</p>
-        <h1 className="t-hero mt-2 max-w-4xl text-balance">Tourism money that stays on the island.</h1>
+        <h1 className="t-hero mt-2 max-w-4xl text-balance">Tourism money that stays on the <Fancy hat>island.</Fancy></h1>
         <p className="t-lead mt-5 max-w-2xl text-muted">
           Catanduanes has world-class surf, cliffs and heritage, and most of the people who could show them to you have no way to
           take a booking. Pasyar plans the trip, books the locals and gives the province data it has never had.
