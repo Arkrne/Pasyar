@@ -17,7 +17,7 @@ import { festivalsBetween } from "@/data/festivals";
 import { TOWN_BY_ID } from "@/data/towns";
 import { TOWN_STYLE, ISLAND } from "@/data/palette";
 import { Tile } from "@/components/icons";
-import { LogoLoader } from "@/components/splash";
+import { Kinis } from "@/components/kinis";
 
 const STEPS = ["days", "group", "budget", "interests", "arrival"] as const;
 type Step = (typeof STEPS)[number];
@@ -369,7 +369,7 @@ function Building({ storm }: { storm: boolean }) {
   }, [lines.length]);
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-white px-6 text-center">
-      <LogoLoader size={80} />
+      <Kinis pose="thinking" size={170} />
       <h1 className="t-title mt-8">Building your trip</h1>
       <div className="relative mt-3 h-6 w-full max-w-sm overflow-hidden">
         <AnimatePresence mode="popLayout">

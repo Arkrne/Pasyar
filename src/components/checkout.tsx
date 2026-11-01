@@ -10,6 +10,7 @@ import { useStore, peso, type Booking } from "@/lib/store";
 import { OPERATOR_BY_ID, SERVICE_BY_ID } from "@/data/operators";
 import { cn } from "@/lib/cn";
 import { Confetti } from "./fx";
+import { Kinis } from "./kinis";
 
 const METHODS = [
   { id: "gcash" as const, label: "GCash", icon: Smartphone, tint: "#0a6cbf" },
@@ -186,7 +187,8 @@ export function Checkout({ trip, open, onClose }: { trip: Itinerary; open: boole
               >
                 <Check className="size-8" strokeWidth={3} />
               </motion.div>
-              <p className="mt-4 text-[15px] text-muted">Booking code</p>
+              <Kinis pose="celebrating" size={120} className="-mt-2" />
+              <p className="mt-1 text-[15px] text-muted">Booking code</p>
               <p className="tabular text-[28px] font-bold tracking-[0.04em]">{done.code}</p>
               <div className="mt-5 rounded-[22px] bg-white p-4 shadow-[var(--shadow-md)] outline outline-1 outline-[var(--hairline)]">
                 <QRCodeSVG value={`PASYAR:${done.code}:${done.guest}`} size={168} fgColor="#1d1d1f" />

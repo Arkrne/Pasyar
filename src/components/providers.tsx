@@ -6,6 +6,7 @@ import { subscribeLive, useStore } from "@/lib/store";
 import { OPERATOR_BY_ID } from "@/data/operators";
 import { Toaster, toast } from "./toast";
 import { Splash } from "./splash";
+import { KinisGuide } from "./kinis";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -32,6 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <MotionConfig reducedMotion="user">
       <Splash />
       {children}
+      <KinisGuide />
       <Toaster />
     </MotionConfig>
   );
