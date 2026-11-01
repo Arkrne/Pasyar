@@ -32,37 +32,78 @@ import { ISLAND, TOWN_STYLE } from "@/data/palette";
 
 /* ------------------------------------------------------------ */
 export function IslandFacts() {
-  const facts: { n: number; pre?: string; u: string; l: string; icon: IconName; bg: string }[] = [
-    { n: 1492, u: "km²", l: "12th largest island in the Philippines", icon: "island", bg: ISLAND.sky },
-    { n: 11, u: "towns", l: "Ten on the coast, one in the hills", icon: "church", bg: ISLAND.terracotta },
-    { n: 400, pre: "~", u: "km", l: "of jagged coastline and bays", icon: "wave", bg: ISLAND.lagoon },
-    { n: 1, pre: "#", u: "abacá", l: "Declared the country's abacá capital in 2022", icon: "abaca", bg: ISLAND.mango },
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const y1 = useTransform(scrollYProgress, [0, 1], [60, -60]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [110, -110]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const facts: { n: number; pre?: string; u: string; l: string; img: string; tint: string }[] = [
+    { n: 1492, u: "km²", l: "12th largest island in the Philippines", img: "/photos/binurong-aerial.webp", tint: "#0A5AA8" },
+    { n: 11, u: "towns", l: "Ten on the coast, one in the hills", img: "/photos/viga-oco-aerial.webp", tint: "#B53427" },
+    { n: 400, pre: "~", u: "km", l: "of jagged coastline and bays", img: "/photos/twin-rock.webp", tint: "#0F7E6C" },
+    { n: 1, pre: "#", u: "abacá", l: "The country's abacá capital since 2022", img: "/photos/abaca-bags.webp", tint: "#B26A00" },
+  ];
+  const stack = [
+    { src: "/photos/binurong-sunset.webp", cap: "Binurong Point", rot: -7, y: y1, cls: "left-0 top-6 w-[58%]" },
+    { src: "/photos/bato-church.webp", cap: "Bato Church, 1830", rot: 6, y: y2, cls: "right-0 top-0 w-[48%]" },
+    { src: "/photos/puraran-beach.webp", cap: "Puraran surf", rot: -2, y: y3, cls: "left-[22%] bottom-0 w-[56%]" },
   ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-36">
-      <Reveal>
-        <p className="t-eyebrow mb-4 text-muted">Catanduanes</p>
-        <h2 className="t-display max-w-4xl text-balance">
-          The <span className="text-gradient-island">Land of the Howling Winds</span> faces the open Pacific. Most of it never shows up on a travel site.
-        </h2>
-      </Reveal>
-      <Reveal delay={0.08}>
-        <p className="t-lead mt-6 max-w-2xl text-muted">
-          Surf breaks, stone churches older than the country, and homestays in towns with one road in. The guides and boatmen who
-          know them are mostly on Facebook and a phone number. Pasyar puts them in one plan you can book.
-        </p>
-      </Reveal>
-      <div className="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+    <section ref={ref} className="relative overflow-hidden">
+      <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-24 md:px-8 md:py-32 lg:grid-cols-[1.15fr_1fr]">
+        <div>
+          <Reveal>
+            <p className="t-eyebrow mb-4 flex items-center gap-2 text-sunset">
+              <span className="h-px w-8 bg-sunset" /> Catanduanes
+            </p>
+            <h2 className="t-display text-balance">
+              The <span className="text-gradient-island">Land of the Howling Winds</span> faces the open Pacific. Most of it never shows up on a travel site.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <p className="t-lead mt-6 max-w-xl text-ink-2/80">
+              Surf breaks, stone churches older than the country, and homestays in towns with one road in. The guides and boatmen
+              who know them are mostly on Facebook and a phone number. Pasyar puts them in one plan you can book.
+            </p>
+          </Reveal>
+        </div>
+        <div className="relative mx-auto h-[380px] w-full max-w-[520px] md:h-[440px]">
+          {stack.map((c, k) => (
+            <motion.figure
+              key={c.src}
+              style={{ y: c.y, rotate: c.rot }}
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ type: "spring", bounce: 0.3, duration: 0.9, delay: k * 0.12 }}
+              whileHover={{ scale: 1.04, rotate: 0, zIndex: 10 }}
+              className={`absolute rounded-[22px] bg-white p-2 pb-9 shadow-[0_30px_60px_-24px_rgba(16,40,70,.45)] ${c.cls}`}
+            >
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[16px]">
+                <Image src={c.src} alt={c.cap} fill sizes="300px" className="object-cover" />
+              </div>
+              <figcaption className="absolute bottom-2.5 left-3 text-[13px] font-semibold text-ink-2">{c.cap}</figcaption>
+            </motion.figure>
+          ))}
+        </div>
+      </div>
+
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 px-5 pb-24 md:grid-cols-4 md:gap-4 md:px-8 md:pb-32">
         {facts.map((f, k) => (
-          <Reveal key={f.l} delay={k * 0.06}>
-            <div className="border-t border-[var(--hairline-strong)] pt-5">
-              <Tile name={f.icon} bg={f.bg} size={40} className="mb-4" shape={k % 2 ? "circle" : "square"} />
-              <p className="tabular text-[44px] font-bold leading-none tracking-[-0.04em] md:text-[56px]">
-                <CountUp to={f.n} prefix={f.pre ?? ""} />
-                <span className="ml-1.5 text-[17px] font-semibold tracking-normal text-muted">{f.u}</span>
-              </p>
-              <p className="mt-3 text-[15px] leading-snug text-ink-2">{f.l}</p>
-            </div>
+          <Reveal key={f.l} delay={k * 0.07}>
+            <Tilt className="h-full rounded-[26px]">
+              <div className="group relative h-[220px] overflow-hidden rounded-[26px] text-white shadow-[0_24px_48px_-24px_rgba(16,40,70,.55)] md:h-[260px]">
+                <Image src={f.img} alt="" fill sizes="(max-width:768px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, ${f.tint}22 0%, ${f.tint}cc 62%, ${f.tint} 100%)` }} />
+                <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+                  <p className="tabular text-[40px] font-bold leading-none tracking-[-0.04em] md:text-[54px]">
+                    <CountUp to={f.n} prefix={f.pre ?? ""} />
+                    <span className="ml-1 text-[15px] font-semibold tracking-normal text-white/80 md:text-[17px]">{f.u}</span>
+                  </p>
+                  <p className="mt-2 text-[13px] leading-snug text-white/90 md:text-[14px]">{f.l}</p>
+                </div>
+              </div>
+            </Tilt>
           </Reveal>
         ))}
       </div>
@@ -70,7 +111,6 @@ export function IslandFacts() {
   );
 }
 
-/* ------------------------------------------------------------ */
 export function HowItWorks() {
   const steps = [
     {
