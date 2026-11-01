@@ -103,7 +103,8 @@ export function Splash() {
   const [phase, setPhase] = useState<"trace" | "logo">("trace");
 
   useEffect(() => {
-    const seen = introAlreadySeen();
+    // the intro belongs to the home page only; deep links (shared trips, operator view) open straight away
+    const seen = location.pathname !== "/" || introAlreadySeen();
     if (seen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- skip the intro on repeat visits this session
       setShow(false);

@@ -17,8 +17,8 @@ import { ISLAND, MOSAIC } from "@/data/palette";
 import { useIntroDone } from "@/components/splash";
 
 const SLIDES = [
-  { src: "/photos/binurong-sunset.webp", caption: "Binurong Point, Baras" },
   { src: "/photos/hiyop-heart-cove.webp", caption: "Hiyop Point, Pandan" },
+  { src: "/photos/binurong-sunset.webp", caption: "Binurong Point, Baras" },
   { src: "/photos/puraran-beach.webp", caption: "Puraran Beach, Baras" },
   { src: "/photos/twin-rock.webp", caption: "Twin Rock, Virac" },
   { src: "/photos/viga-sunrise.webp", caption: "Sunrise over Viga" },
@@ -172,7 +172,7 @@ export function Hero() {
               >
                 Rediscover the <span className="text-gradient-island">Land of the Howling Winds.</span>
               </motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: ready ? 1 : 0 }} transition={{ delay: 1.15, duration: 0.8 }} className="mt-3 max-w-md text-[15px] text-muted">
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: ready ? 1 : 0 }} transition={{ delay: 1.15, duration: 0.8 }} className="mt-3 max-w-md text-[15px] text-ink-2">
                 Surf, cliffs, stone churches and 11 towns that still feel undiscovered.
               </motion.p>
               <motion.div
