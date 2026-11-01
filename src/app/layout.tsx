@@ -15,6 +15,9 @@ export const metadata: Metadata = {
   description:
     "Plan a day-by-day Catanduanes trip with real places, local guides, stays and rides you can book in one checkout. Built in Catanduanes for IGNITE 2026.",
   applicationName: "Pasyar",
+  authors: [{ name: "Francis T. Saldua", url: "https://francissaldua.me" }],
+  creator: "Francis T. Saldua",
+  publisher: "Francis T. Saldua",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [{ url: "/brand/icon-64.png", sizes: "64x64" }, { url: "/brand/icon-192.png", sizes: "192x192" }],

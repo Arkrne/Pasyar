@@ -11,7 +11,7 @@ import { cn } from "@/lib/cn";
 
 const TABS = [
   { href: "/", key: "plan" as const, icon: Compass, match: (p: string) => p === "/" || p.startsWith("/plan") || p.startsWith("/trip") },
-  { href: "/explore", key: "explore" as const, icon: MapPinned, match: (p: string) => p.startsWith("/explore") || p.startsWith("/place") },
+  { href: "/explore", key: "explore" as const, icon: MapPinned, match: (p: string) => p.startsWith("/explore") || p.startsWith("/place") || p.startsWith("/weather") || p.startsWith("/calendar") },
   { href: "/community", key: "community" as const, icon: Users, match: (p: string) => p.startsWith("/community") },
   { href: "/trips", key: "trips" as const, icon: Ticket, match: (p: string) => p.startsWith("/trips") },
   { href: "/profile", key: "profile" as const, icon: CircleUserRound, match: (p: string) => p.startsWith("/profile") },
@@ -63,6 +63,8 @@ export function TopNav({ overlay = false }: { overlay?: boolean }) {
   const links = [
     { href: "/", label: t("plan", lang), m: TABS[0].match },
     { href: "/explore", label: t("explore", lang), m: TABS[1].match },
+    { href: "/weather", label: lang === "en" ? "Weather" : lang === "fil" ? "Panahon" : "Panahon", m: (p: string) => p.startsWith("/weather") },
+    { href: "/calendar", label: lang === "en" ? "Festivals" : "Pista", m: (p: string) => p.startsWith("/calendar") },
     { href: "/community", label: t("community", lang), m: TABS[2].match },
     { href: "/market", label: t("market", lang), m: (p: string) => p.startsWith("/market") },
     { href: "/trips", label: t("trips", lang), m: TABS[3].match },

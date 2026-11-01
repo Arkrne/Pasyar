@@ -159,6 +159,30 @@ export default function AboutPage() {
         </Reveal>
       </section>
 
+      <section className="mt-20">
+        <Reveal>
+          <p className="t-eyebrow text-muted">Who made this</p>
+          <div className="mt-4 flex flex-col gap-5 rounded-[28px] bg-gradient-to-br from-[#FFF4E3] via-[#FDEBDF] to-[#E3F2FD] p-6 md:flex-row md:items-center md:p-8">
+            <div className="grid size-20 shrink-0 place-items-center rounded-[24px] bg-white text-[28px] font-bold text-ocean shadow-[var(--shadow-md)]">FS</div>
+            <div className="flex-1">
+              <h2 className="text-[26px] font-bold tracking-[-0.02em]">Francis T. Saldua</h2>
+              <p className="text-[15px] font-medium text-ink-2">Creator and developer of Pasyar</p>
+              <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-muted">
+                Designed the product, wrote the planner and built the web app from Catanduanes for DOST IGNITE 2026.
+              </p>
+            </div>
+            <a
+              href="https://francissaldua.me"
+              target="_blank"
+              rel="noreferrer"
+              className="pressable inline-flex h-12 items-center justify-center rounded-full bg-ink px-6 text-[15px] font-semibold text-white"
+            >
+              francissaldua.me
+            </a>
+          </div>
+        </Reveal>
+      </section>
+
       <section className="mt-20 flex flex-col items-center text-center">
         <Image src="/brand/logo.png" alt="" width={56} height={68} className="h-auto w-12" />
         <h2 className="t-display mt-5 max-w-2xl text-balance">See it work in under a minute.</h2>

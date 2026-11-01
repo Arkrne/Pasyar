@@ -32,6 +32,12 @@ import { OPERATORS } from "@/data/operators";
 import { ALERTS, EMERGENCY, TRANSPORT } from "@/data/content";
 import type { PlaceKind, ServiceKind, TownId } from "@/data/types";
 import { useStore, peso } from "@/lib/store";
+import Link from "next/link";
+import { useForecast } from "@/lib/forecast";
+import { TOWN_STYLE } from "@/data/palette";
+import { FESTIVALS } from "@/data/festivals";
+import { IslandIcon, Tile, MosaicBand } from "@/components/icons";
+import { WeatherGlyph } from "@/components/weather-glyph";
 import { planTrip } from "@/lib/planner";
 import { toast } from "@/components/toast";
 import { cn } from "@/lib/cn";
@@ -64,6 +70,8 @@ export function ExploreView() {
   const current = useStore((s) => s.current);
   const setCurrent = useStore((s) => s.setCurrent);
   const draft = useStore((s) => s.draft);
+  const { forecast } = useForecast();
+  const [mode, setMode] = useState<"places" | "weather">("places");
 
   useEffect(() => {
     const t = new URLSearchParams(location.search).get("town") as TownId | null;
@@ -102,8 +110,18 @@ export function ExploreView() {
     <Page wide className="!max-w-7xl">
       <div className="pt-4 md:pt-6">
         <p className="t-eyebrow text-muted">Explore</p>
-        <h1 className="t-display mt-1">The island, town by town.</h1>
+        <h1 className="t-display mt-1">
+          The island, <span className="text-gradient-island">town by town.</span>
+        </h1>
         <p className="t-lead mt-2 max-w-2xl text-muted">Tap a town on the map to see its history, food, festivals and the people who can take you around.</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href="/weather" className="pressable inline-flex items-center gap-2 rounded-full bg-sky-wash px-4 py-2 text-[14px] font-semibold text-ocean-ink">
+            <WeatherGlyph code={2} size={22} /> 7-day forecast
+          </Link>
+          <Link href="/calendar" className="pressable inline-flex items-center gap-2 rounded-full bg-sand px-4 py-2 text-[14px] font-semibold text-[#8a4a12]">
+            <IslandIcon name="mask" size={18} color="#EA753C" /> Fiesta calendar
+          </Link>
+        </div>
       </div>
 
       <div className="no-scrollbar -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">
@@ -117,7 +135,26 @@ export function ExploreView() {
 
       <div className="mt-4 grid gap-5 lg:grid-cols-[1.25fr_1fr]">
         <div className="relative h-[58svh] overflow-hidden rounded-[28px] bg-surface outline outline-1 outline-[var(--hairline)] lg:sticky lg:top-[76px] lg:h-[calc(100dvh-110px)]">
-          <ExploreMap selected={town} onSelect={setTown} places={places} onPlace={setPlace} />
+          <ExploreMap
+            selected={town}
+            onSelect={setTown}
+            places={places}
+            onPlace={setPlace}
+            weather={mode === "weather" ? forecast : null}
+            showPlaces={mode === "places" && (!!town || filter !== "all")}
+          />
+          <div className="glass-strong absolute right-3 top-3 z-[500] flex rounded-full p-1 shadow-[var(--shadow-md)]">
+            {(["places", "weather"] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={cn("pressable relative rounded-full px-3.5 py-1.5 text-[13px] font-semibold", mode === m ? "text-white" : "text-ink-2")}
+              >
+                {mode === m && <motion.span layoutId="mapmode" className="absolute inset-0 rounded-full bg-ink" transition={{ type: "spring", bounce: 0.2, duration: 0.4 }} />}
+                <span className="relative">{m === "weather" ? "Weather today" : "Places"}</span>
+              </button>
+            ))}
+          </div>
           <AnimatePresence>
             {town && (
               <motion.button
@@ -151,6 +188,14 @@ export function ExploreView() {
                 <div className="relative aspect-[16/10] overflow-hidden rounded-[28px]">
                   <Image src={t.cover} alt={t.name} fill sizes="(max-width:1024px) 100vw, 40vw" className="object-cover" priority />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
+                  <motion.div
+                    className="absolute right-4 top-4"
+                    initial={{ scale: 0, rotate: -30 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", bounce: 0.5, duration: 0.7, delay: 0.15 }}
+                  >
+                    <Tile name={TOWN_STYLE[t.id].icon} bg={TOWN_STYLE[t.id].color} size={52} accent="#F6CB67" />
+                  </motion.div>
                   <div className="absolute bottom-0 p-5 text-white">
                     <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-white/75">
                       {t.region === "south" ? "South" : t.region === "east" ? "Pacific side" : "North"}
@@ -198,18 +243,10 @@ export function ExploreView() {
                       ))}
                     </ul>
                   </Block>
-                  <Block title="Festivals">
-                    <ul className="space-y-2.5">
-                      {t.festivals.map((x) => (
-                        <li key={x.name}>
-                          <p className="text-[15px] font-semibold">{x.name}</p>
-                          <p className="text-[12px] font-semibold text-ocean">{x.when}</p>
-                          <p className="text-[13px] leading-snug text-muted">{x.note}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  </Block>
+                  <TownWeather town={t.id} />
                 </div>
+
+                <FestivalStories town={t.id} />
 
                 <Block title="Getting there">
                   <p className="text-[15px] leading-relaxed text-ink-2">{t.gettingThere}</p>
@@ -250,6 +287,7 @@ export function ExploreView() {
         </div>
       </div>
 
+      <MosaicBand className="mt-14" />
       <Directory dir={dir} setDir={setDir} town={town} />
       <Logistics />
 
@@ -422,3 +460,80 @@ function Logistics() {
   );
 }
 
+
+function TownWeather({ town }: { town: TownId }) {
+  const { forecast } = useForecast();
+  const days = forecast?.towns[town]?.days ?? [];
+  return (
+    <Block title="Weather this week">
+      {!days.length ? (
+        <div className="skeleton h-24 rounded-2xl" />
+      ) : (
+        <div className="grid grid-cols-7 gap-1">
+          {days.map((d, i) => (
+            <div key={d.date} className={cn("flex flex-col items-center rounded-2xl py-1.5", i === 0 && "bg-sky-wash")}>
+              <span className="text-[10px] font-semibold text-muted">
+                {i === 0 ? "Today" : new Date(d.date + "T00:00:00").toLocaleDateString("en-PH", { weekday: "narrow" })}
+              </span>
+              <WeatherGlyph code={d.code} size={30} still={i !== 0} />
+              <span className="tabular text-[12px] font-bold">{d.max}°</span>
+              <span className="tabular text-[10px] text-muted">{d.pop}%</span>
+            </div>
+          ))}
+        </div>
+      )}
+      <Link href="/weather" className="mt-3 inline-block text-[13px] font-semibold text-ocean">
+        Compare all towns
+      </Link>
+    </Block>
+  );
+}
+
+function FestivalStories({ town }: { town: TownId }) {
+  const list = FESTIVALS.filter((f) => f.town === town);
+  const color = TOWN_STYLE[town].color;
+  if (!list.length) return null;
+  return (
+    <section className="mt-4 overflow-hidden rounded-[24px] outline outline-1 outline-[var(--hairline)]" style={{ background: TOWN_STYLE[town].soft }}>
+      <div className="flex items-center justify-between px-5 pt-5">
+        <h3 className="text-[13px] font-semibold uppercase tracking-[0.06em]" style={{ color }}>
+          Fiestas and the stories behind them
+        </h3>
+        <Link href={`/calendar?town=${town}`} className="text-[13px] font-semibold text-ocean">
+          Calendar
+        </Link>
+      </div>
+      <ul className="space-y-3 p-5">
+        {list.map((f, k) => (
+          <motion.li
+            key={f.id}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: "spring", bounce: 0, duration: 0.5, delay: k * 0.06 }}
+            className="rounded-[20px] bg-white p-4 shadow-[var(--shadow-sm)]"
+          >
+            <div className="flex items-start gap-3">
+              <Tile name={f.icon} bg={color} size={42} accent="#F6CB67" shape={k % 2 ? "circle" : "square"} />
+              <div className="min-w-0">
+                <p className="text-[16px] font-semibold leading-tight">{f.name}</p>
+                <p className="mt-0.5 text-[12px] font-semibold" style={{ color }}>
+                  {f.dateLabel}
+                  {!f.confirmed && " · confirm locally"}
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-[14px] leading-relaxed text-ink-2">{f.history}</p>
+            <ul className="mt-3 flex flex-wrap gap-1.5">
+              {f.highlights.map((h) => (
+                <li key={h} className="rounded-full bg-surface px-2.5 py-1 text-[12px] text-ink-2">
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </motion.li>
+        ))}
+      </ul>
+    </section>
+  );
+}

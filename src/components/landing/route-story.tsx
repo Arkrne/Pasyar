@@ -6,6 +6,8 @@ import { useState } from "react";
 import { project, smoothPath, TOWN_PATHS, VIEW_H, VIEW_W } from "@/lib/geo";
 import { PLACE_BY_ID } from "@/data/places";
 import { cn } from "@/lib/cn";
+import { TOWN_STYLE } from "@/data/palette";
+import { TOWN_ID_BY_NAME } from "@/data/towns";
 
 const STOPS = [
   { id: "airport", label: "Land in Virac", lat: 13.5764, lng: 124.2061, day: 1 },
@@ -87,7 +89,7 @@ export function RouteStory() {
               </defs>
               <g filter="url(#soft)">
                 {TOWN_PATHS.map((t) => (
-                  <path key={t.name} d={t.d} fill="#e8edf1" stroke="#ffffff" strokeWidth={1.4} />
+                  <path key={t.name} d={t.d} fill={TOWN_STYLE[TOWN_ID_BY_NAME[t.name]]?.soft ?? "#e8edf1"} stroke="#ffffff" strokeWidth={1.4} />
                 ))}
               </g>
               <motion.path d={PATH} fill="none" stroke="#dfe6ec" strokeWidth={3} strokeDasharray="2 6" strokeLinecap="round" />

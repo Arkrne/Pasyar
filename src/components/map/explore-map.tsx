@@ -1,33 +1,61 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { GeoJSON, MapContainer, Marker, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, GeoJsonObject } from "geojson";
 import { geo } from "@/lib/geo";
-import { TOWN_ID_BY_NAME, TOWN_BY_ID } from "@/data/towns";
+import { TOWN_ID_BY_NAME, TOWN_BY_ID, TOWNS } from "@/data/towns";
+import { TOWN_STYLE } from "@/data/palette";
 import type { Place, TownId } from "@/data/types";
+import type { Forecast } from "@/lib/forecast";
+import { rankTowns, VERDICT } from "@/lib/forecast";
+import { IslandIcon } from "@/components/icons";
+import { WeatherGlyph } from "@/components/weather-glyph";
 import { Basemap } from "./basemap";
 
-const KIND_COLOR: Record<string, string> = {
-  beach: "#0f9aa0",
-  surf: "#0a6cbf",
-  waterfall: "#3b82c4",
-  viewpoint: "#1f8a4c",
-  heritage: "#b26a00",
-  cave: "#6b5b95",
-  river: "#3b82c4",
-  island: "#0f9aa0",
-  nature: "#1f8a4c",
-  town: "#1d1d1f",
+const KIND_ICON: Record<string, Parameters<typeof IslandIcon>[0]["name"]> = {
+  beach: "palm",
+  surf: "surf",
+  waterfall: "waterfall",
+  viewpoint: "mountain",
+  heritage: "church",
+  cave: "cave",
+  river: "river",
+  island: "island",
+  nature: "palm",
+  town: "flower",
 };
 
-function placeIcon(p: Place, dim: boolean) {
+function placeIcon(p: Place, dim: boolean, hot: boolean) {
+  const st = TOWN_STYLE[p.town];
+  const svg = renderToStaticMarkup(<IslandIcon name={KIND_ICON[p.kind]} size={16} color="#fff" accent="rgba(255,255,255,.6)" />);
   return L.divIcon({
     className: "",
-    html: `<div class="pin-dot" style="background:${KIND_COLOR[p.kind]};width:14px;height:14px;${dim ? "opacity:.35" : ""}"></div>`,
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
+    html: `<div style="position:relative;width:28px;height:28px;${dim ? "opacity:.35;" : ""}">
+      ${hot ? `<span class="pulse-ring" style="background:${st.color}"></span>` : ""}
+      <div class="pin" style="position:relative;width:28px;height:28px;background:${st.color}">${svg}</div></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+}
+
+function townBadge(id: TownId, selected: boolean, wxCode?: number, verdictColor?: string) {
+  const st = TOWN_STYLE[id];
+  const inner = wxCode != null
+    ? renderToStaticMarkup(<WeatherGlyph code={wxCode} size={30} still />)
+    : renderToStaticMarkup(<IslandIcon name={st.icon} size={22} color="#fff" accent="#F6CB67" />);
+  const bg = wxCode != null ? "#fff" : st.color;
+  const ring = verdictColor ?? "#fff";
+  return L.divIcon({
+    className: "",
+    html: `<div style="display:flex;flex-direction:column;align-items:center;transform:translateY(-6px)">
+      <div style="width:${selected ? 46 : 38}px;height:${selected ? 46 : 38}px;border-radius:14px;background:${bg};display:grid;place-items:center;box-shadow:0 0 0 3px ${ring},0 10px 22px -8px rgba(0,0,0,.35);animation:pin-in 500ms cubic-bezier(.23,1,.32,1) both">${inner}</div>
+      <span style="margin-top:4px;font:600 11px/1 var(--font-sans);color:#1d1d1f;background:rgba(255,255,255,.9);padding:3px 7px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.08);white-space:nowrap">${TOWN_BY_ID[id].name}</span>
+    </div>`,
+    iconSize: [80, 70],
+    iconAnchor: [40, 30],
   });
 }
 
@@ -55,7 +83,7 @@ function Controller({ selected }: { selected: TownId | null }) {
     if (f) {
       map.invalidateSize();
       const b = L.geoJSON(f as GeoJsonObject).getBounds();
-      const bottomPad = window.innerWidth < 768 ? Math.round(window.innerHeight * 0.25) : pad;
+      const bottomPad = window.innerWidth < 768 ? Math.round(window.innerHeight * 0.1) : pad;
       map.flyToBounds(b, { paddingTopLeft: [pad, pad], paddingBottomRight: [pad, bottomPad], duration: 0.9, maxZoom: 12 });
     }
     first.current = false;
@@ -68,13 +96,23 @@ export default function ExploreMap({
   onSelect,
   places,
   onPlace,
+  weather,
+  weatherDay = 0,
+  showPlaces = true,
 }: {
   selected: TownId | null;
   onSelect: (t: TownId | null) => void;
   places: Place[];
   onPlace: (id: string) => void;
+  weather?: Forecast | null;
+  weatherDay?: number;
+  showPlaces?: boolean;
 }) {
-  const key = useMemo(() => `geo-${selected ?? "none"}`, [selected]);
+  const verdicts = useMemo(() => {
+    if (!weather) return null;
+    return Object.fromEntries(rankTowns(weather, weatherDay).map((r) => [r.town.id, r])) as Record<TownId, ReturnType<typeof rankTowns>[number]>;
+  }, [weather, weatherDay]);
+  const key = `geo-${selected ?? "none"}-${weather ? weatherDay : "x"}`;
 
   return (
     <MapContainer center={[13.8, 124.25]} zoom={10} zoomControl={false} scrollWheelZoom className="h-full w-full" attributionControl>
@@ -85,11 +123,13 @@ export default function ExploreMap({
         style={(f) => {
           const id = TOWN_ID_BY_NAME[(f?.properties as { name: string }).name];
           const on = id === selected;
+          const color = verdicts ? VERDICT[verdicts[id].verdict].color : TOWN_STYLE[id].color;
           return {
-            color: on ? "#0a6cbf" : "#ffffff",
-            weight: on ? 2.5 : 1.5,
-            fillColor: on ? "#0a6cbf" : "#0f9aa0",
-            fillOpacity: on ? 0.14 : selected ? 0.03 : 0.08,
+            className: "town-shape",
+            color: on ? color : "#ffffff",
+            weight: on ? 3 : 1.5,
+            fillColor: color,
+            fillOpacity: on ? 0.38 : selected ? 0.1 : verdicts ? 0.32 : 0.22,
           };
         }}
         onEachFeature={(f, layer) => {
@@ -98,32 +138,48 @@ export default function ExploreMap({
           layer.on({
             click: () => onSelect(id),
             mouseover: (e) => {
-              if (id !== selected) (e.target as L.Path).setStyle({ fillOpacity: 0.2 });
+              if (id !== selected) (e.target as L.Path).setStyle({ fillOpacity: 0.45, weight: 2.5, color: TOWN_STYLE[id].color });
             },
             mouseout: (e) => {
-              if (id !== selected) (e.target as L.Path).setStyle({ fillOpacity: selected ? 0.03 : 0.08 });
+              if (id !== selected)
+                (e.target as L.Path).setStyle({ fillOpacity: selected ? 0.1 : verdicts ? 0.32 : 0.22, weight: 1.5, color: "#ffffff" });
             },
           });
-          layer.bindTooltip(name, { sticky: true, direction: "top", offset: [0, -6] });
         }}
       />
-      {places.map((p) => (
+      {TOWNS.map((t) => (
         <Marker
-          key={p.id}
-          position={[p.lat, p.lng]}
-          icon={placeIcon(p, !!selected && p.town !== selected)}
-          eventHandlers={{ click: () => onPlace(p.id) }}
-          zIndexOffset={selected && p.town === selected ? 400 : 0}
+          key={`t-${t.id}-${selected === t.id}-${weather ? weatherDay : "x"}`}
+          position={t.center}
+          icon={townBadge(t.id, selected === t.id, verdicts?.[t.id]?.day.code, verdicts ? VERDICT[verdicts[t.id].verdict].color : undefined)}
+          zIndexOffset={selected === t.id ? 900 : 600}
+          eventHandlers={{ click: () => onSelect(t.id) }}
         >
-          <Tooltip direction="top" offset={[0, -8]}>
-            <span className="text-[12px] font-semibold">{p.name}</span>
-            <span className="block text-[11px] text-[#6e6e73]">{TOWN_BY_ID[p.town].name}</span>
-          </Tooltip>
+          {verdicts && (
+            <Tooltip direction="top" offset={[0, -36]}>
+              <span className="text-[12px] font-semibold">
+                {t.name}: {VERDICT[verdicts[t.id].verdict].label}, {verdicts[t.id].day.max}°, {verdicts[t.id].day.pop}% rain
+              </span>
+            </Tooltip>
+          )}
         </Marker>
       ))}
+      {showPlaces &&
+        places.map((p) => (
+          <Marker
+            key={`${p.id}-${selected ?? ""}`}
+            position={[p.lat, p.lng]}
+            icon={placeIcon(p, !!selected && p.town !== selected, !!selected && p.town === selected)}
+            eventHandlers={{ click: () => onPlace(p.id) }}
+            zIndexOffset={selected && p.town === selected ? 1000 : 0}
+          >
+            <Tooltip direction="top" offset={[0, -12]}>
+              <span className="text-[12px] font-semibold">{p.name}</span>
+              <span className="block text-[11px] text-[#6e6e73]">{TOWN_BY_ID[p.town].name}</span>
+            </Tooltip>
+          </Marker>
+        ))}
       <Controller selected={selected} />
     </MapContainer>
   );
 }
-
-export { KIND_COLOR };

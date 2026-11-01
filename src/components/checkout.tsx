@@ -9,6 +9,7 @@ import { bookableItems, commissionFor, type Itinerary } from "@/lib/planner";
 import { useStore, peso, type Booking } from "@/lib/store";
 import { OPERATOR_BY_ID, SERVICE_BY_ID } from "@/data/operators";
 import { cn } from "@/lib/cn";
+import { Confetti } from "./fx";
 
 const METHODS = [
   { id: "gcash" as const, label: "GCash", icon: Smartphone, tint: "#0a6cbf" },
@@ -174,8 +175,9 @@ export function Checkout({ trip, open, onClose }: { trip: Itinerary; open: boole
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-              className="flex flex-col items-center pb-2 text-center"
+              className="relative flex flex-col items-center pb-2 text-center"
             >
+              <Confetti />
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}

@@ -26,21 +26,24 @@ import { Logo } from "@/components/shell";
 import { describe, useWeather } from "@/lib/weather";
 import { useStore, peso } from "@/lib/store";
 import { cn } from "@/lib/cn";
+import { Tile, type IconName } from "@/components/icons";
+import { CountUp, Tilt } from "@/components/fx";
+import { ISLAND, TOWN_STYLE } from "@/data/palette";
 
 /* ------------------------------------------------------------ */
 export function IslandFacts() {
-  const facts = [
-    { n: "1,492", u: "km²", l: "12th largest island in the Philippines" },
-    { n: "11", u: "towns", l: "Ten on the coast, one in the hills" },
-    { n: "~400", u: "km", l: "of jagged coastline and bays" },
-    { n: "#1", u: "abacá", l: "Declared the country's abacá capital in 2022" },
+  const facts: { n: number; pre?: string; u: string; l: string; icon: IconName; bg: string }[] = [
+    { n: 1492, u: "km²", l: "12th largest island in the Philippines", icon: "island", bg: ISLAND.sky },
+    { n: 11, u: "towns", l: "Ten on the coast, one in the hills", icon: "church", bg: ISLAND.terracotta },
+    { n: 400, pre: "~", u: "km", l: "of jagged coastline and bays", icon: "wave", bg: ISLAND.lagoon },
+    { n: 1, pre: "#", u: "abacá", l: "Declared the country's abacá capital in 2022", icon: "abaca", bg: ISLAND.mango },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-24 md:px-8 md:py-36">
       <Reveal>
         <p className="t-eyebrow mb-4 text-muted">Catanduanes</p>
         <h2 className="t-display max-w-4xl text-balance">
-          The Land of the Howling Winds faces the open Pacific. Most of it never shows up on a travel site.
+          The <span className="text-gradient-island">Land of the Howling Winds</span> faces the open Pacific. Most of it never shows up on a travel site.
         </h2>
       </Reveal>
       <Reveal delay={0.08}>
@@ -53,8 +56,9 @@ export function IslandFacts() {
         {facts.map((f, k) => (
           <Reveal key={f.l} delay={k * 0.06}>
             <div className="border-t border-[var(--hairline-strong)] pt-5">
+              <Tile name={f.icon} bg={f.bg} size={40} className="mb-4" shape={k % 2 ? "circle" : "square"} />
               <p className="tabular text-[44px] font-bold leading-none tracking-[-0.04em] md:text-[56px]">
-                {f.n}
+                <CountUp to={f.n} prefix={f.pre ?? ""} />
                 <span className="ml-1.5 text-[17px] font-semibold tracking-normal text-muted">{f.u}</span>
               </p>
               <p className="mt-3 text-[15px] leading-snug text-ink-2">{f.l}</p>
@@ -89,7 +93,7 @@ export function HowItWorks() {
     },
   ];
   return (
-    <section className="bg-surface py-24 md:py-32">
+    <section className="mood-lagoon py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <Reveal>
           <h2 className="t-display max-w-3xl text-balance">From a blank page to a booked trip in about a minute.</h2>
@@ -97,6 +101,7 @@ export function HowItWorks() {
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {steps.map((s, k) => (
             <Reveal key={s.title} delay={k * 0.08}>
+              <Tilt className="h-full rounded-[22px]">
               <article className="card hover-zoom h-full overflow-hidden">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image src={s.img} alt="" fill sizes="(max-width:768px) 100vw, 33vw" className="object-cover" />
@@ -110,6 +115,7 @@ export function HowItWorks() {
                   <p className="mt-2 text-[15px] leading-relaxed text-muted">{s.body}</p>
                 </div>
               </article>
+              </Tilt>
             </Reveal>
           ))}
         </div>
@@ -151,6 +157,9 @@ export function TownsRail() {
             >
               <Image src={t.cover} alt={t.name} fill sizes="300px" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+              <span className="absolute left-4 top-4 transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-110">
+                <Tile name={TOWN_STYLE[t.id].icon} bg={TOWN_STYLE[t.id].color} size={44} accent="#F6CB67" />
+              </span>
               <div className="absolute inset-x-0 bottom-0 p-5 text-white">
                 <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-white/70">{t.region === "south" ? "South" : t.region === "east" ? "Pacific side" : "North"}</p>
                 <h3 className="mt-1 text-[26px] font-bold tracking-[-0.02em]">{t.name}</h3>
@@ -168,7 +177,7 @@ export function TownsRail() {
 export function CommunityTeaser() {
   const posts = POSTS.filter((p) => p.trip).slice(0, 3);
   return (
-    <section className="bg-surface py-24 md:py-32">
+    <section className="mood-jungle py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <Reveal>
           <p className="t-eyebrow mb-3 text-muted">Community</p>
@@ -409,7 +418,7 @@ export function MoneySection() {
     { label: "Pasyar commission", v: 120, c: "bg-ocean" },
   ];
   return (
-    <section className="bg-surface py-24 md:py-32">
+    <section className="mood-sunrise py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <div className="grid gap-12 md:grid-cols-2">
           <Reveal>
@@ -518,7 +527,7 @@ export function Footer() {
           </p>
         </div>
         {[
-          { h: "Travelers", l: [["Plan a trip", "/plan"], ["Explore the map", "/explore"], ["Community", "/community"], ["Market", "/market"]] },
+          { h: "Travelers", l: [["Plan a trip", "/plan"], ["Explore the map", "/explore"], ["Weather", "/weather"], ["Fiesta calendar", "/calendar"], ["Community", "/community"], ["Market", "/market"]] },
           { h: "Operators", l: [["Dashboard", "/business"], ["Insights", "/insights"], ["Getting here", "/explore#logistics"]] },
           { h: "About", l: [["The pitch", "/about"], ["Photo credits", "/credits"], ["Safety & emergencies", "/explore#safety"]] },
         ].map((c) => (
@@ -535,6 +544,22 @@ export function Footer() {
             </ul>
           </div>
         ))}
+      </div>
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-[var(--hairline)] px-5 py-6 md:px-8">
+        <p className="text-[14px] text-ink-2">
+          Designed and developed by{" "}
+          <a href="https://francissaldua.me" target="_blank" rel="noreferrer" className="font-semibold text-ink hover:text-ocean">
+            Francis T. Saldua
+          </a>
+        </p>
+        <a
+          href="https://francissaldua.me"
+          target="_blank"
+          rel="noreferrer"
+          className="pressable inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-[13px] font-semibold text-ocean shadow-[var(--shadow-sm)]"
+        >
+          francissaldua.me <ArrowRight className="size-3.5" />
+        </a>
       </div>
       <div className="mx-auto max-w-6xl px-5 pb-8 text-[12px] text-faint md:px-8">
         Photos from Wikimedia Commons contributors under CC licenses. Map data © OpenStreetMap contributors, tiles by OpenFreeMap. Weather by Open-Meteo.

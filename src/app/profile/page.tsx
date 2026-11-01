@@ -87,6 +87,11 @@ export default function ProfilePage() {
         <LinkRow icon={Store} label="Pasalubong market" href="/market" />
         <LinkRow icon={Briefcase} label="Pasyar Business (operators)" href="/business" />
         <LinkRow icon={LineChart} label="Tourism insights (LGU / DOT)" href="/insights" />
+        <a href="https://francissaldua.me" target="_blank" rel="noreferrer" className="flex items-center gap-3 border-b border-[var(--hairline)] px-4 py-3.5 hover:bg-surface">
+          <Award className="size-5 text-muted" />
+          <span className="flex-1 text-[15px] font-medium">Made by Francis T. Saldua</span>
+          <span className="text-[13px] font-semibold text-ocean">francissaldua.me</span>
+        </a>
         <Row icon={RotateCcw} label="Reset demo data">
           <button
             onClick={() => {

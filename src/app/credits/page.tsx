@@ -11,6 +11,13 @@ export default function CreditsPage() {
       <div className="pt-6">
         <p className="t-eyebrow text-muted">Credits</p>
         <h1 className="t-display mt-1">Photos and data</h1>
+        <p className="mt-3 text-[15px] text-ink-2">
+          Pasyar is designed and developed by{" "}
+          <a href="https://francissaldua.me" target="_blank" rel="noreferrer" className="font-semibold text-ocean">
+            Francis T. Saldua (francissaldua.me)
+          </a>
+          . Icons are original artwork made for Pasyar.
+        </p>
         <p className="t-body mt-3 max-w-2xl text-muted">
           Every photo on Pasyar comes from Wikimedia Commons and is used under the license its author chose. Thank you to the
           photographers below. Map data © OpenStreetMap contributors, basemap by OpenFreeMap. Municipal boundaries from the

@@ -94,6 +94,7 @@ function DrawnRoute({ line, color, animate, weight = 4 }: { line: [number, numbe
     <>
       <Polyline positions={line.slice(0, n)} pathOptions={{ color: "#ffffff", weight: weight + 4, opacity: 0.9, className: "route-line" }} />
       <Polyline positions={line.slice(0, n)} pathOptions={{ color, weight, opacity: 1, className: "route-line" }} />
+      {n >= line.length && <Polyline positions={line} pathOptions={{ color: "#ffffff", weight: 2, opacity: 0.9, className: "route-flow" }} />}
     </>
   );
 }

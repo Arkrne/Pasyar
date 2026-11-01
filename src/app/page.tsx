@@ -14,6 +14,8 @@ import {
   TownsRail,
 } from "@/components/landing/sections";
 import { TabBar } from "@/components/shell";
+import { ForecastSection, FestivalStrip } from "@/components/landing/island-sections";
+import { MosaicBand } from "@/components/icons";
 
 export default function Home() {
   return (
@@ -22,13 +24,17 @@ export default function Home() {
       <main>
         <Hero />
         <IslandFacts />
+        <MosaicBand />
         <HowItWorks />
         <RouteStory />
         <TownsRail />
+        <ForecastSection />
+        <FestivalStrip />
         <CommunityTeaser />
         <StormSection />
         <OperatorSection />
         <MoneySection />
+        <MosaicBand className="mt-10" />
         <MarketTeaser />
         <FinalCTA />
       </main>

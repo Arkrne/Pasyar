@@ -6,9 +6,9 @@
   One accent (ocean, pulled from the logo), one warm signal (coral, from the logo's swirl).
 */
 :root {
-  --bg: #ffffff;
-  --surface: #f5f5f7;
-  --surface-2: #ebebef;
+  --bg: #fffcf7;
+  --surface: #f6f2ea;
+  --surface-2: #ece5d8;
   --ink: #1d1d1f;
   --ink-2: #424245;
   --muted: #6e6e73;
@@ -27,6 +27,21 @@
   --leaf-soft: #e6f4ec;
   --amber: #b26a00;
   --amber-soft: #fdf3e1;
+
+  /* island palette (Happy Island mosaic + Pasyar logo) */
+  --sunset: #ea753c;
+  --mango: #f6a54f;
+  --sun: #f6cb67;
+  --festival: #ba091f;
+  --terracotta: #b53427;
+  --mint: #49c29f;
+  --deep-teal: #0f7e6c;
+  --sky: #2b8fd6;
+  --palm: #6db33f;
+  --pink: #e0569b;
+  --sand: #fff4e3;
+  --sky-wash: #e3f2fd;
+  --mint-wash: #e6f7f0;
 
   --glass: rgba(255, 255, 255, 0.72);
   --glass-strong: rgba(255, 255, 255, 0.86);
@@ -64,6 +79,19 @@
   --color-leaf-soft: var(--leaf-soft);
   --color-amber: var(--amber);
   --color-amber-soft: var(--amber-soft);
+  --color-sunset: var(--sunset);
+  --color-mango: var(--mango);
+  --color-sun: var(--sun);
+  --color-festival: var(--festival);
+  --color-terracotta: var(--terracotta);
+  --color-mint: var(--mint);
+  --color-deep-teal: var(--deep-teal);
+  --color-sky: var(--sky);
+  --color-palm: var(--palm);
+  --color-pink: var(--pink);
+  --color-sand: var(--sand);
+  --color-sky-wash: var(--sky-wash);
+  --color-mint-wash: var(--mint-wash);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "SF Pro Text", sans-serif;
   --font-display: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "SF Pro Display", sans-serif;
   --radius-card: 22px;
@@ -85,7 +113,11 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(1100px 520px at 0% -8%, rgba(127, 196, 255, 0.28), transparent 60%),
+    radial-gradient(900px 480px at 100% 0%, rgba(246, 165, 79, 0.18), transparent 60%),
+    linear-gradient(180deg, #fffdf9 0%, var(--bg) 40%, #fff9f0 100%);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);
   overscroll-behavior-y: none;
@@ -342,4 +374,67 @@ select {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+}
+
+/* Island moods for sections */
+.mood-sunrise {
+  background: linear-gradient(180deg, #fff6e6 0%, #ffeedd 50%, #fff8ef 100%);
+}
+.mood-lagoon {
+  background: linear-gradient(180deg, #ecf8f4 0%, #e3f3fb 100%);
+}
+.mood-jungle {
+  background: linear-gradient(180deg, #f1f8ea 0%, #e8f4ef 100%);
+}
+.mood-festival {
+  background: radial-gradient(900px 400px at 15% 0%, rgba(234, 117, 60, 0.14), transparent 60%),
+    radial-gradient(800px 380px at 90% 100%, rgba(224, 86, 155, 0.12), transparent 60%), #fff8f1;
+}
+.mood-sky {
+  background: linear-gradient(180deg, #e8f4fd 0%, #f6fbff 100%);
+}
+
+.text-gradient-island {
+  background: linear-gradient(100deg, #ea753c 0%, #f6a54f 25%, #49c29f 60%, #2b8fd6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Card that tilts toward the pointer (set by JS variables), with a soft sheen */
+.tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 400ms var(--ease-out), box-shadow 300ms var(--ease-out);
+  will-change: transform;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  animation: pulse-ring 2.2s var(--ease-out) infinite;
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+.route-flow {
+  stroke-dasharray: 2 10;
+  animation: dash-flow 1.4s linear infinite;
+}
+
+.town-shape {
+  transition: fill-opacity 300ms var(--ease-out), stroke-width 300ms var(--ease-out);
 }

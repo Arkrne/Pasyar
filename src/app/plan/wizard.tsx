@@ -13,6 +13,11 @@ import { PLACES } from "@/data/places";
 import { OPERATORS } from "@/data/operators";
 import { useWeather } from "@/lib/weather";
 import { cn } from "@/lib/cn";
+import { festivalsBetween } from "@/data/festivals";
+import { TOWN_BY_ID } from "@/data/towns";
+import { TOWN_STYLE, ISLAND } from "@/data/palette";
+import { Tile } from "@/components/icons";
+import { LogoLoader } from "@/components/splash";
 
 const STEPS = ["days", "group", "budget", "interests", "arrival"] as const;
 type Step = (typeof STEPS)[number];
@@ -162,6 +167,7 @@ export function Wizard() {
                     className="h-12 rounded-2xl bg-surface px-4 font-medium outline-none"
                   />
                 </div>
+                <FiestaHint start={draft.startDate} days={draft.days} />
                 <p className="mt-6 text-center text-[14px] text-muted">
                   {draft.days <= 2 ? "Enough for Virac and the Pacific side." : draft.days <= 4 ? "Enough to reach the north." : "Enough for the whole island at a slow pace."}
                 </p>
@@ -363,12 +369,7 @@ function Building({ storm }: { storm: boolean }) {
   }, [lines.length]);
   return (
     <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-white px-6 text-center">
-      <motion.div
-        animate={{ rotate: [0, 8, -8, 0], scale: [1, 1.04, 1] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <Image src="/brand/logo.png" alt="" width={84} height={102} priority className="h-auto w-[72px]" />
-      </motion.div>
+      <LogoLoader size={80} />
       <h1 className="t-title mt-8">Building your trip</h1>
       <div className="relative mt-3 h-6 w-full max-w-sm overflow-hidden">
         <AnimatePresence mode="popLayout">
@@ -388,5 +389,37 @@ function Building({ storm }: { storm: boolean }) {
         <motion.div className="h-full bg-ocean" initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 2, ease: [0.23, 1, 0.32, 1] }} />
       </div>
     </div>
+  );
+}
+
+function FiestaHint({ start, days }: { start: string; days: number }) {
+  const list = festivalsBetween(start, days);
+  return (
+    <AnimatePresence>
+      {list.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 6 }}
+          transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+          className="mx-auto mt-6 max-w-sm rounded-[22px] bg-[#FFF4E3] p-4"
+        >
+          <p className="text-[13px] font-semibold text-sunset">Fiesta during your trip!</p>
+          <ul className="mt-2 space-y-2">
+            {list.slice(0, 3).map((f) => (
+              <li key={f.id} className="flex items-center gap-3">
+                <Tile name={f.icon} bg={f.town === "province" ? ISLAND.sunset : TOWN_STYLE[f.town].color} size={34} accent="#F6CB67" />
+                <span className="min-w-0">
+                  <span className="block truncate text-[14px] font-semibold">{f.name}</span>
+                  <span className="block truncate text-[12px] text-muted">
+                    {f.town === "province" ? "Whole island" : TOWN_BY_ID[f.town].name} · {f.dateLabel.split(" (")[0]}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

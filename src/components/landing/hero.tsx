@@ -10,6 +10,8 @@ import { useStore } from "@/lib/store";
 import { t } from "@/lib/i18n";
 import { INTERESTS } from "@/data/content";
 import { cn } from "@/lib/cn";
+import { FloatingTiles } from "@/components/icons";
+import { ISLAND } from "@/data/palette";
 
 const SLIDES = [
   { src: "/photos/binurong-sunset.webp", caption: "Binurong Point, Baras" },
@@ -48,7 +50,25 @@ export function Hero() {
           </motion.div>
         </AnimatePresence>
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/10 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0b3d6b]/45 via-black/5 to-[#2a1406]/70" />
+      {/* warm sun glow behind the headline */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute left-[8%] top-[22%] size-[46vmax] rounded-full"
+        style={{ background: "radial-gradient(circle, rgba(246,203,103,.55) 0%, rgba(234,117,60,.25) 35%, transparent 65%)", mixBlendMode: "screen" }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.75, 1, 0.75] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <FloatingTiles
+        className="hidden md:block"
+        items={[
+          { name: "sun", x: "84%", y: "16%", size: 52, bg: ISLAND.sun, r: 10 },
+          { name: "fish", x: "74%", y: "30%", size: 40, bg: ISLAND.sky, r: -8, d: 7 },
+          { name: "palm", x: "90%", y: "40%", size: 44, bg: ISLAND.lagoon, r: 6 },
+          { name: "flower", x: "68%", y: "14%", size: 34, bg: ISLAND.pink, r: -12, d: 8 },
+          { name: "surf", x: "80%", y: "52%", size: 38, bg: ISLAND.sunset, r: 14 },
+        ]}
+      />
 
       <motion.div style={{ y: textY, opacity: fade }} className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-end px-5 pb-[176px] md:px-8 md:pb-[170px]">
         <motion.p
@@ -65,7 +85,8 @@ export function Hero() {
           transition={{ type: "spring", bounce: 0, duration: 1, delay: 0.18 }}
           className="t-hero max-w-4xl text-balance"
         >
-          Your Catanduanes trip, planned in 60 seconds.
+          Your Catanduanes trip,{" "}
+          <span className="bg-gradient-to-r from-[#FFE7A3] via-[#FFB27A] to-[#9FE7D2] bg-clip-text text-transparent">planned in 60 seconds.</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 16 }}

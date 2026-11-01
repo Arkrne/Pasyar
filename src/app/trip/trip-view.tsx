@@ -38,6 +38,11 @@ import { Concierge } from "@/components/concierge";
 import { toast } from "@/components/toast";
 import { dayColor } from "@/components/map/colors";
 import { cn } from "@/lib/cn";
+import { useForecast, scoreDay, verdict, VERDICT } from "@/lib/forecast";
+import { WeatherGlyph } from "@/components/weather-glyph";
+import { festivalsBetween } from "@/data/festivals";
+import { Tile } from "@/components/icons";
+import { TOWN_STYLE, ISLAND } from "@/data/palette";
 
 const TripMap = dynamic(() => import("@/components/map/trip-map"), {
   ssr: false,
@@ -383,6 +388,7 @@ const DaySection = forwardRef<
           <span className="text-[19px] font-semibold tracking-[-0.015em]">{d.title}</span>
         </h2>
       </div>
+      <DayExtras d={d} />
       <p className="ml-[38px] mt-0.5 text-[13px] text-muted">
         {new Date(d.date).toLocaleDateString("en-PH", { weekday: "long", month: "short", day: "numeric" })} · {Math.round(d.driveMin / 6) / 10} h driving · {peso(d.cost)}
       </p>
@@ -546,5 +552,30 @@ function SwapSheet({
         ))}
       </ul>
     </Sheet>
+  );
+}
+
+/** Forecast and any fiesta for this day, right under the day title. */
+function DayExtras({ d }: { d: DayPlan }) {
+  const { forecast } = useForecast();
+  const wx = forecast?.towns[d.baseTown]?.days.find((x) => x.date === d.date);
+  const fiestas = festivalsBetween(d.date, 1);
+  const hasSea = d.items.some((i) => i.placeId && PLACE_BY_ID[i.placeId]?.seaExposed);
+  if (!wx && !fiestas.length) return null;
+  const v = wx ? verdict(scoreDay(wx), wx) : null;
+  return (
+    <div className="ml-[38px] mt-2 flex flex-wrap gap-1.5">
+      {wx && v && (
+        <span className="inline-flex items-center gap-1 rounded-full py-0.5 pl-1 pr-2.5 text-[12px] font-semibold" style={{ background: VERDICT[v].soft, color: VERDICT[v].color }}>
+          <WeatherGlyph code={wx.code} size={22} still /> {wx.max}° · {wx.pop}% rain
+          {hasSea && (v === "inland" || v === "stay") ? " · consider swapping this day" : ""}
+        </span>
+      )}
+      {fiestas.slice(0, 2).map((f) => (
+        <span key={f.id} className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF4E3] py-0.5 pl-0.5 pr-2.5 text-[12px] font-semibold text-sunset">
+          <Tile name={f.icon} bg={f.town === "province" ? ISLAND.sunset : TOWN_STYLE[f.town].color} size={20} /> {f.name}
+        </span>
+      ))}
+    </div>
   );
 }
