@@ -14,6 +14,7 @@ import { OPERATORS } from "@/data/operators";
 import { cn } from "@/lib/cn";
 import { Tile, type IconName } from "@/components/icons";
 import { ISLAND, MOSAIC } from "@/data/palette";
+import { useIntroDone } from "@/components/splash";
 
 const SLIDES = [
   { src: "/photos/binurong-sunset.webp", caption: "Binurong Point, Baras" },
@@ -46,6 +47,7 @@ const RING: { name: IconName; x: string; y: string; s: number; r: number }[] = [
  */
 export function Hero() {
   const reduce = useReducedMotion();
+  const ready = useIntroDone();
   const ref = useRef<HTMLElement>(null);
   const [slide, setSlide] = useState(0);
   const [act2, setAct2] = useState(false);
@@ -117,8 +119,8 @@ export function Hero() {
                 <motion.span
                   key={i}
                   initial={{ y: "60%", opacity: 0 }}
-                  animate={{ y: "0%", opacity: 1 }}
-                  transition={{ type: "spring", bounce: 0.25, duration: 1, delay: 0.25 + i * 0.05 }}
+                  animate={ready ? { y: "0%", opacity: 1 } : { y: "60%", opacity: 0 }}
+                  transition={{ type: "spring", bounce: 0.25, duration: 1, delay: 0.1 + i * 0.06 }}
                   className="block text-[20.5vw] font-black leading-[0.82] tracking-[-0.06em] sm:text-[12.4vw] 2xl:text-[200px]"
                 >
                   {ch}
@@ -138,7 +140,7 @@ export function Hero() {
                 className="absolute hidden sm:block"
                 style={{ left: r.x, top: r.y }}
                 initial={{ opacity: 0, scale: 0.3, rotate: r.r - 30 }}
-                animate={{ opacity: 1, scale: 1, rotate: r.r, y: [0, -12, 0] }}
+                animate={ready ? { opacity: 1, scale: 1, rotate: r.r, y: [0, -12, 0] } : { opacity: 0, scale: 0.3, rotate: r.r - 30 }}
                 transition={{
                   opacity: { delay: 0.9 + i * 0.06 },
                   scale: { delay: 0.9 + i * 0.06, type: "spring", bounce: 0.5, duration: 0.8 },
@@ -153,8 +155,8 @@ export function Hero() {
             <div className="absolute inset-x-0 top-[calc(50%-7vh-16.8vw-76px)] flex justify-center px-6 sm:top-[calc(50%-7vh-5.1vw-84px)] 2xl:top-[calc(50%-7vh-82px-84px)]">
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
+                animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                transition={{ delay: 0.15, duration: 0.8 }}
                 className="flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-2 shadow-[var(--shadow-sm)] backdrop-blur md:text-[12px]"
               >
                 <span className="size-2 rounded-full bg-sunset" /> The Happy Island · Bicol, Philippines
@@ -164,18 +166,18 @@ export function Hero() {
             <div className="absolute inset-x-0 top-[calc(50%-7vh+16.8vw+28px)] flex flex-col items-center px-6 text-center sm:top-[calc(50%-7vh+5.1vw+36px)] 2xl:top-[calc(50%-7vh+82px+36px)]">
               <motion.p
                 initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
+                animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
                 transition={{ delay: 0.95, type: "spring", bounce: 0, duration: 0.9 }}
                 className="max-w-2xl text-balance text-[clamp(22px,2.6vw,34px)] font-semibold leading-tight tracking-[-0.02em] text-ink"
               >
                 Rediscover the <span className="text-gradient-island">Land of the Howling Winds.</span>
               </motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15, duration: 0.8 }} className="mt-3 max-w-md text-[15px] text-muted">
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: ready ? 1 : 0 }} transition={{ delay: 1.15, duration: 0.8 }} className="mt-3 max-w-md text-[15px] text-muted">
                 Surf, cliffs, stone churches and 11 towns that still feel undiscovered.
               </motion.p>
               <motion.div
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: ready ? 1 : 0 }}
                 transition={{ delay: 1.5 }}
                 className="mt-6 flex flex-col items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted"
               >

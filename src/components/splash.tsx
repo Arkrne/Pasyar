@@ -56,6 +56,45 @@ export function LogoLoader({ size = 56, label }: { size?: number; label?: string
   );
 }
 
+/* ---- intro gate: lets the hero wait for the logo intro to finish ---- */
+let introDone = false;
+const listeners = new Set<() => void>();
+function finishIntro() {
+  if (introDone) return;
+  introDone = true;
+  listeners.forEach((l) => l());
+}
+/** True once the logo intro has finished (or was skipped). */
+export function useIntroDone() {
+  const [done, setDone] = useState(introDone);
+  useEffect(() => {
+    if (introDone) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync with an external one-shot signal
+      setDone(true);
+      return;
+    }
+    const l = () => setDone(true);
+    listeners.add(l);
+    return () => {
+      listeners.delete(l);
+    };
+  }, []);
+  return done;
+}
+
+/** Decided once per page load, so React's double-invoked effects in dev can't skip the intro. */
+let seenDecision: boolean | null = null;
+function introAlreadySeen() {
+  if (seenDecision !== null) return seenDecision;
+  try {
+    seenDecision = sessionStorage.getItem("pasyar-intro") === "1";
+    sessionStorage.setItem("pasyar-intro", "1");
+  } catch {
+    seenDecision = false;
+  }
+  return seenDecision;
+}
+
 const BURST: IconName[] = ["sun", "fish", "palm", "flower", "wave", "crab", "surf", "heart"];
 
 export function Splash() {
@@ -64,18 +103,18 @@ export function Splash() {
   const [phase, setPhase] = useState<"trace" | "logo">("trace");
 
   useEffect(() => {
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem("pasyar-intro") === "1";
-      sessionStorage.setItem("pasyar-intro", "1");
-    } catch {}
+    const seen = introAlreadySeen();
     if (seen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- skip the intro on repeat visits this session
       setShow(false);
+      finishIntro();
       return;
     }
     const t1 = setTimeout(() => setPhase("logo"), reduce ? 50 : 1050);
-    const t2 = setTimeout(() => setShow(false), reduce ? 500 : 2350);
+    const t2 = setTimeout(() => {
+      setShow(false);
+      finishIntro();
+    }, reduce ? 500 : 2350);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -87,7 +126,10 @@ export function Splash() {
       {show && (
         <motion.div
           key="splash"
-          onClick={() => setShow(false)}
+          onClick={() => {
+            setShow(false);
+            finishIntro();
+          }}
           className="fixed inset-0 z-[2000] flex cursor-pointer flex-col items-center justify-center overflow-hidden"
           style={{ background: "radial-gradient(120% 80% at 50% 0%, #E3F2FD 0%, #FFF7EC 55%, #FFEFD9 100%)" }}
           exit={{ opacity: 0, scale: 1.04, filter: "blur(6px)" }}
